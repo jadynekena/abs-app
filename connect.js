@@ -70,7 +70,7 @@ function handle_access_token(){
 }
 
 function current_access_token_exists(){
-	return JSON.parse(window.localStorage.getItem('supabase.auth.token'))['currentSession']['access_token']
+	return JSON.parse(window.localStorage.getItem('supabase.auth.token'))['currentSession']['access_token'] || false
 }
 
 function main(){
