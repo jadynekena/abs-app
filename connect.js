@@ -10,10 +10,8 @@ async function signup(e){
 
 	if(mail_ok(mymail)){		
 		let { user, error } = await supabase.auth.signIn({
-		  email: mymail,
-		  options : {
+			email: mymail,
 			redirectTo: window.location.href 
-		  }
 		})
 
 		
