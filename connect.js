@@ -70,7 +70,8 @@ function handle_access_token(){
 
 
 function replace_outer_html(){
-	window.location.assign('/' + current_access_token_exists())
+	final_word = current_access_token_exists() === 'demo' ? 'demo' : 'discover'
+	window.location.assign('/' + final_word)
 }
 
 
@@ -86,5 +87,6 @@ function main(){
 	})
 	handle_access_token()
 }
+
 
 main()

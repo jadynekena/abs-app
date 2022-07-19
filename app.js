@@ -18,10 +18,10 @@ async function signOut() {
 }
 
 
-function who_is_connected(){
+async function who_is_connected(){
 	me = supabase.auth.user()
 
-	return me ? me['id'] : '77f8732a-3d1a-4625-989c-b41f22c84761'
+	return me ? me['id'] : await getDemoID()
 }
 
 function current_access(){
