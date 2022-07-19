@@ -29,9 +29,6 @@ async function signup(e){
 	}
 }
 
-async function signOut() {
-  const { error } = await supabase.auth.signOut()
-}
 
 function set_alert(content,color){
 	ab = document.getElementById('alertbox')
@@ -56,7 +53,7 @@ function handle_access_token(){
 
 		window.localStorage.setItem('access_token', current_access_token_exists())
 		setTimeout(function(){
-			window.location.href = '/app'
+			replace_outer_html()
 		}, 1000)
 		
 
@@ -70,6 +67,13 @@ function handle_access_token(){
 	}
 	
 }
+
+
+function replace_outer_html(){
+	window.location.assign('/' + current_access_token_exists())
+}
+
+
 
 function current_access_token_exists(){
 	return 	window.localStorage.getItem('supabase.auth.token') ? JSON.parse(window.localStorage.getItem('supabase.auth.token'))['currentSession']['access_token'] : false

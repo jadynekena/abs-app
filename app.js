@@ -1,35 +1,27 @@
 const baseURL = 'https://datastudio.google.com/embed/reporting/87c26c67-28ae-45c3-aaa4-f864248ebb4f/page/p_im617hlswc'
 
+const SUPABASE_URL = "https://ojfpzzbgxyrtwmqolqwa.supabase.co"
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9qZnB6emJneHlydHdtcW9scXdhIiwicm9sZSI6ImFub24iLCJpYXQiOjE2NTc1MTU2OTMsImV4cCI6MTk3MzA5MTY5M30.Cw-t8RhhDHs0vKA6Q-zpQRL5JrX9vMX5g9oThszCEC4'
+const { createClient } = supabase
+var supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+
 
 async function init_spbs(){
+	var curr = current_access()
+	const { user, error } = supabase.auth.setAuth(current_access())
+	return supabase.auth.user()
+}
 
-	//if(!current_access()) window.location.href = '/'
-
-
-	const SUPABASE_URL = "https://ojfpzzbgxyrtwmqolqwa.supabase.co"
-	const SUPABASE_KEY = current_access()
-
-	try {
-
-		const { createClient } = supabase	
-		const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
-
-		const { data, error } = await supabase
-		  .from('dernieres_donnees')
-		  .select('*')
-
-		console.log({data})
-		console.log({error})
-	}catch(e){
-		console.error(e)
-	}
+async function signOut() {
+  const { error } = await supabase.auth.signOut()
 }
 
 
 function who_is_connected(){
-	me = JSON.parse(localStorage.getItem('supabase.auth.token'))['currentSession']['user']['id']
+	me = supabase.auth.user()
 
-	return me || '77f8732a-3d1a-4625-989c-b41f22c84761'
+	return me ? me['id'] : '77f8732a-3d1a-4625-989c-b41f22c84761'
 }
 
 function current_access(){
@@ -69,3 +61,4 @@ function set_iframe(my_departments){
 }
 
 main()
+
