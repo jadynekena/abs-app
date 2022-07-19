@@ -53,10 +53,9 @@ function handle_access_token(){
 	const curr_URL = window.location.href
 	if(curr_URL.includes('#access_token=') || current_access_token_exists()){		
 		document.querySelector('body').style.display = 'none'
-		//redirect in .5 second
-		setTimeout(function(){
-			window.location.href = '/app'
-		},500)
+
+		window.localStorage.setItem('access_token', current_access_token_exists())
+		window.location.href = '/app'
 
 	}else if(curr_URL.includes('unauthorized_client')) {
 		window.localStorage.clear()
@@ -70,15 +69,15 @@ function handle_access_token(){
 }
 
 function current_access_token_exists(){
-	return JSON.parse(window.localStorage.getItem('supabase.auth.token'))['currentSession']['access_token'] || false
+	return 	window.localStorage.getItem('supabase.auth.token') ? JSON.parse(window.localStorage.getItem('supabase.auth.token'))['currentSession']['access_token'] : false
 }
 
 function main(){
-	handle_access_token()
 	document.getElementById('connect').addEventListener('click', signup)
 	document.getElementById('mymail').addEventListener('keydown', function(event){
 		if(event.key === "Enter") signup()
 	})
+	handle_access_token()
 }
 
 main()
