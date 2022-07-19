@@ -69,8 +69,8 @@ function handle_access_token(){
 }
 
 
-function replace_outer_html(){
-	final_word = current_access_token_exists() === 'demo' ? 'demo' : 'discover'
+async function replace_outer_html(){
+	final_word = await who_is_connected() === await getDemoID() ? 'demo' : 'discover'
 	window.location.assign('/' + final_word)
 }
 

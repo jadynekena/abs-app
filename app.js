@@ -18,12 +18,6 @@ async function signOut() {
 }
 
 
-async function who_is_connected(){
-	me = supabase.auth.user()
-
-	return me ? me['id'] : await getDemoID()
-}
-
 function current_access(){
 	return window.localStorage.getItem('supabase.auth.token') ? JSON.parse(window.localStorage.getItem('supabase.auth.token'))['currentSession']['access_token'] : false
 }

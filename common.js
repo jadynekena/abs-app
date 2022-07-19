@@ -6,3 +6,10 @@ function getDemoID(){
 		return txt
 	})
 }
+
+
+async function who_is_connected(){
+	me = supabase.auth.user()
+
+	return me ? me['id'] : await getDemoID()
+}
