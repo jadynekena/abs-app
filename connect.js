@@ -10,9 +10,8 @@ async function signup(e){
 
 	if(mail_ok(mymail)){		
 		let { user, error } = await supabase.auth.signIn({
-			email: mymail,
-			redirectTo: window.location.href 
-		})
+			email: mymail			
+		}, {redirectTo: window.location.href })
 
 		
 		if (error){
@@ -79,7 +78,7 @@ function current_access_token_exists(){
 function main(){
 	document.getElementById('connect').addEventListener('click', signup)
 	document.getElementById('mymail').addEventListener('keydown', function(event){
-		if(event.key === "Enter") signup()
+		if(event.key === "Enter") signup(event)
 	})
 	handle_access_token()
 }
