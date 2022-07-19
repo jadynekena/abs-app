@@ -58,7 +58,10 @@ function handle_access_token(){
 		document.querySelector('body').style.display = 'none'
 
 		window.localStorage.setItem('access_token', current_access_token_exists())
-		window.location.href = '/app'
+		setTimeout(function(){
+			window.location.href = '/app'
+		}, 1000)
+		
 
 	}else if(curr_URL.includes('unauthorized_client')) {
 		window.localStorage.clear()
