@@ -8,6 +8,53 @@ function on_event(eventtype,selector, callback){
 
 }
 
+function main_common(){
+	document.addEventListener("DOMContentLoaded", send_my_IP)
+}
+
+main_common()
+
+async function send_my_IP(){
+	if(supabase){
+		try{
+			return  await supabase.from('demos').insert({adresse_ip:  await myIP() })	
+		}catch(e){
+			console.warn(e)
+		}
+		
+	}
+}
+
+async function send_my_name(){
+	if(supabase){
+		try{
+			return await supabase.from('demos')
+						  .update({nom: user_data('nom')})
+						  .match({adresse_ip:  await myIP() })	
+		}catch(e){
+			console.warn(e)
+		}
+		
+	}
+}
+
+async function myIP(){
+	adresse_ip = window.localStorage.getItem('adresse_ip') || await get_content('https://ipapi.co/ip/')
+	window.localStorage.setItem('adresse_ip',adresse_ip)
+	return adresse_ip
+}
+
+async function get_content(url){
+	return await fetch(url).then(function (response) {
+		return response.text();
+	}).then(function (txt) {
+		return txt
+	})
+}
+
+function loading(yes){
+	document.querySelector('.loading').style.display = yes ? 'block' : 'none'
+}
 
 function getDemoID(){
 	return fetch('/demoID.txt').then(function (response) {
@@ -22,23 +69,46 @@ function current_access_token_exists(){
 }
 
 function user_details(){
-	return supabase.auth.user()
+	return supabase ? supabase.auth.user() : {}
 }
 
 function user_mail(){
-	return user_details() ? user_details()['email'] : 'demo@amazonbestsellers.org'
+	return user_details() && user_details().length > 0 ? user_details()['email'] : 'demo@amazonbestsellers.org'
 }
 
 function user_meta_datas(){
-	return   user_details() ? user_details()['user_metadata'] : {}
+	return  user_details() && user_details().length > 0 ? user_details()['user_metadata'] : {}
 }
 
 function user_data(dataName){
-	return user_meta_datas() ? (user_meta_datas()[dataName] || "") : ""
+	local_val = window.localStorage.getItem(dataName)
+
+	if(local_val !== null && local_val !== undefined){
+
+		if(local_val.includes('{')) local_val = JSON.parse(local_val)
+
+	}else{
+		local_val = ""
+	}
+	/*
+	console.log({[dataName]: local_val})	
+	*/
+
+	return (local_val && local_val.length > 0) ? local_val 
+			: (user_meta_datas().length > 0 && user_meta_datas()[dataName]) ? user_meta_datas()[dataName] 
+			: ""
 }
 
+
+
 async function logout(){
-	const { error } = await supabase.auth.signOut()
+	try{
+		const { error } = await supabase.auth.signOut()	
+	}catch(e){
+		console.log(e)
+	}
+	
+	window.localStorage.clear()
 	setTimeout(function(){window.location.assign('/')},1000)
 }
 

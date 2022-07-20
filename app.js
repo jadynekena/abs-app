@@ -5,6 +5,7 @@ const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
 const { createClient } = supabase
 var supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 var my_departments = user_data('liste_departements');
+var myname = user_data('nom')
 const SEPARATOR = ';'
 
 
@@ -14,22 +15,35 @@ async function init_spbs(){
 	return supabase.auth.user()
 }
 
+async function init_spbs_demo(){
+	supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+	return supabase
+}
+
 function exactly_three_dptmts(list_with_commas){
 	return (list_with_commas.match(/,/g) || []).length === 2
 }
 
 function main(){
+
 	set_clicks()
 	init_spbs()
 	first_arrival_handler()
+
+	document.addEventListener('click', function(e){
+		if(e.target.innerText.length > 0) loading(true)
+		setTimeout(function(){
+			loading(false)
+		}, 500)
+	})
 }
 
 function first_arrival_handler(){
-	first_connection = Object.keys(user_meta_datas()).length === 0
+	first_connection = myname.length === 0
 
 	if(first_connection){
 		show_all(false)
-		account(true) //then interests(true)
+		account(true)
 	}else {
 		document.querySelector('#you').innerText = user_data('nom')
 		iframe_setup()
@@ -78,7 +92,11 @@ function value_selected(index_of_deptmt){
 }
 
 async function choice_departments(){
+	supabase = await init_spbs_demo()
 	const {data, error} = await supabase.from('liste_tout_departements').select('*')
+	supabase = await init_spbs()
+
+
 	const opt = (data || []).map((e,i) => '<option value="'+e['id_departement']+'">'+e['Departement']+'</option>')
 	return '<div class="select_container">' + new Array(3).fill(`<span class="one_select"><label for="listID">Département n°INDEX_DPTMT</label><select default="value_selected" id="listID">`+opt+`</select></span>`)
 														  .map((e,i) => e.replaceAll('listID','departement'+i).replaceAll('INDEX_DPTMT',(i+1)).replaceAll('value_selected',value_selected(i))   )
@@ -105,7 +123,7 @@ async function interests(firsttime){
 	content = '<p>'+(firsttime ? 'Pour commencer, c' : 'C')+'hoisissez vos 3 départements d\'intérêt.</p>' + all_deptmts + disclaimer 
 	next_steps = save_and_run()
 	btn_name = firsttime ? 'Suivant' : 'Enregistrer'
-
+	with_cancel = firsttime ? false : true
 
 	opt = {
 		firsttime: firsttime,
@@ -114,7 +132,7 @@ async function interests(firsttime){
 		content: content,
 		next_steps: next_steps,
 		btn_name: btn_name,
-		with_cancel: false,
+		with_cancel: with_cancel,
 		fullscreen: true
 	}
 	change_or_create_popup_contents(opt)
@@ -136,43 +154,65 @@ function change_or_create_popup_contents(opt){
 
 }
 
+function get_name_to_save(){
+	return $('#nom').val() || user_data('nom')
+}
+
+function get_deptmts_to_save(){
+	return my_selection() || user_data('liste_departements')
+}
 
 async function save_my_datas(lets_show_all,callback){
 	//console.log({callback})
 
-	my_departments = my_selection() || user_data('liste_departements')
-	//console.log({my_departments})
-
-	myname = $('#nom').val() || user_data('nom')
-	//console.log({myname})
+	myname = get_name_to_save()
+	my_departments = get_deptmts_to_save()
 
 	my_datas = {
 		nom: myname,
 		liste_departements: my_departments
 	} 
 
+	//console.log({my_datas})
+
 	show_all(lets_show_all)
-	const { user, error } = await supabase.auth.update({ 
-		data: my_datas
-	}).then(() => {
 
-		//console.log('UPDATING DONE !')
-
-		if(callback){
-			eval(callback)	
-		} 
+	
+	if(user_details() && supabase){
+		const { user, error } = await supabase.auth.update({ 
+			data: my_datas
+		})
 
 
-		//console.log('CALLBACK DONE')
-	})
+	}else{
 
-	return user
+		//console.log({myname})
+		window.localStorage.setItem('nom',myname)
+		window.localStorage.setItem('liste_departements',my_departments)
+
+		
+	}
+
+	if(callback){
+		eval(callback)	
+	} 
+	
+
+	//if demo -> tell it
+	if(user_mail() === 'demo@amazonbestsellers.org'){
+		send_my_IP()
+		send_my_name()
+	}
+
+
+
+	return my_datas
 
 }
 
 function iframe_setup(){
 	my_departments = user_data('liste_departements');
-	console.log({my_departments})
+	myname = user_data('nom');
 	set_iframe(my_departments)
 }
 
@@ -181,6 +221,7 @@ function logo(){
 }
 
 async function show_popup(with_animation,title,html,btn_name,with_cancel,fullscreen,next_steps){
+
 	return await Swal.fire({
 		animation: with_animation,
 		title: logo() +'<h1>' +  title + '</h1>',
@@ -195,8 +236,10 @@ async function show_popup(with_animation,title,html,btn_name,with_cancel,fullscr
 		allowEscapeKey: with_cancel,
 		showCloseButton: with_cancel,
 		showCancelButton: with_cancel,
-	}).then(function(){
-		if(next_steps) eval(next_steps)
+	}).then(function(result_swal){
+		console.log(result_swal)
+		if(result_swal['isConfirmed'] && next_steps) eval(next_steps)
+		
 	})
 }
 
@@ -211,7 +254,7 @@ function set_iframe(dptmts){
 
 
 	final_url = baseURL + '?params=' + encodeURIComponent(JSON.stringify(params))	 
-	view.src = final_url
+	if(view.src !== final_url) view.src = final_url
 
 	//console.log({final_url})
 	return final_url

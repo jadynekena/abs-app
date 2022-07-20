@@ -6,6 +6,15 @@
 	margin: 0;
 	box-sizing: border-box;
 }
+
+.loading {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  z-index: 100000;
+  transform: translate(-50%, -50%);
+}
+
 a {
 	color: #bf4800;
 	cursor: pointer;

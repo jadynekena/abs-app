@@ -84,9 +84,8 @@ async function replace_outer_html(){
 }
 
 function change_disabled_btn(ceci){
-	console.log({ceci})
-
-	if(!this.checked){
+	
+	if(!document.querySelector('#acceptCGU').checked){
 		document.getElementById('connect').setAttribute('disabled',true)	
 	}else{
 		document.getElementById('connect').removeAttribute('disabled')
@@ -94,11 +93,25 @@ function change_disabled_btn(ceci){
 	
 }
 
+async function process_if_mail_exists(){
+
+	const { data, error } = await supabase.rpc('mail_exists', { mail: document.getElementById('mymail').value })
+
+	already_exists = data
+
+	document.querySelector('#acceptCGU').checked = already_exists
+	document.querySelector('.cgu_container').style.display= already_exists ? "none" : ""
+	set_alert((already_exists ? 'Un plaisir de vous revoir 🤗' : ''),'green')
+	change_disabled_btn()
+	
+}
+
 function main(){
 	document.getElementById('acceptCGU').addEventListener('click', change_disabled_btn)
 	document.getElementById('connect').addEventListener('click', signup)
-	document.getElementById('mymail').addEventListener('keydown', function(event){
+	document.getElementById('mymail').addEventListener('keyup', function(event){
 		if(event.key === "Enter") signup(event)
+		if(mail_ok(document.getElementById('mymail').value)) process_if_mail_exists()
 	})
 	handle_access_token()
 }
