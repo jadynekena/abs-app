@@ -110,13 +110,20 @@ async function process_if_mail_exists(){
 
 }
 
+function on_mail_change(event){
+	//
+
+	if(event.key === "Enter") signup(event)
+	if(mail_ok(document.getElementById('mymail').value)) process_if_mail_exists()
+
+
+}
+
 function main(){
 	document.getElementById('acceptCGU').addEventListener('click', change_disabled_btn)
 	document.getElementById('connect').addEventListener('click', signup)
-	document.getElementById('mymail').addEventListener('keyup', function(event){
-		if(event.key === "Enter") signup(event)
-		if(mail_ok(document.getElementById('mymail').value)) process_if_mail_exists()
-	})
+	document.getElementById('mymail').addEventListener('keyup', function(event){ on_mail_change(event)})
+	document.getElementById('mymail').addEventListener('input', function(event){ on_mail_change(event)})
 	handle_access_token()
 }
 

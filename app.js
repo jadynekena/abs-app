@@ -38,7 +38,7 @@ function main(){
 }
 
 function first_arrival_handler(){
-	first_connection = myname.length === 0
+	first_connection = myname.trim().length === 0
 
 	if(first_connection){
 		show_all(false)
@@ -108,6 +108,8 @@ async function account(firsttime){
 	next_steps = firsttime ? 'save_my_datas(false,"interests('+firsttime+')")' : save_and_run()
 	btn_name = firsttime ? 'Suivant' : 'Enregistrer'
 	show_popup(true,title,content,btn_name,!firsttime,true,next_steps)
+
+	$('#niveau')[0].value = user_data('id_niveau')
 }
 
 function show_all(yes){
@@ -123,7 +125,7 @@ function set_clicks(){
 }
 
 function my_selection(){
-	return $('select:visible').get().map(e => e.value).join(SEPARATOR)
+	return $('.one_select select:visible').get().map(e => e.value).join(SEPARATOR)
 }
 
 function selected_if_right_item(my_departments,dptmt,index_of_deptmt){
@@ -151,9 +153,33 @@ function welcome(){
 }
 
 async function number_of_available_edits(){
+	res = await all_credits()
+	return res['remain_credits']
+}
+
+async function all_credits(){
 	const supabase_local = createClient(SUPABASE_URL, SUPABASE_KEY);
-	res = await supabase_local.rpc('number_of_available_edits',{ip: await myIP()})
-	return res.data
+	me = await who_is_connected() ; 
+	res = await supabase_local.rpc('user_credits',{'id_user':me});
+
+	return res.data && res.data[0] ? res.data[0] : {}
+
+}
+
+async function disclaimer_credits(firsttime){
+	var res = await all_credits()
+	var remain = res['remain_credits']
+	var max = res['max_credits']
+	var used = res['used_credits']
+
+	return '<p>'+(firsttime ? 'Vous pourrez modifier ces valeurs jusqu\'à <strong id="nb_modifs">'+remain+'</strong> fois plus tard.' :
+
+			'Nombre de modifications MAXIMAL: <strong>'+max+'</strong><br/>' +
+			'Nombre de modifications utilisées: <strong>'+used+'</strong><br/>' +
+			'Nombre de modifications restantes: <strong>'+remain+'</strong><br/>' 
+
+
+			) +'</p>'
 }
 
 function save_and_run(){
@@ -163,8 +189,7 @@ function save_and_run(){
 async function interests(firsttime){
 	title = (firsttime ? welcome() : 'Mes intérêts') 
 	all_deptmts = await  choice_departments()
-	remain = await number_of_available_edits()
-	disclaimer = '<p>'+(firsttime ? 'Vous pourrez modifier ces valeurs jusqu\'à <strong id="nb_modifs">'+remain+'</strong> fois plus tard.' : 'Nombre de modifications restantes: <strong id="nb_modifs">'+remain+'</strong>')+'</p>'
+	disclaimer = await disclaimer_credits(firsttime)
 	content = '<p>'+(firsttime ? 'Pour commencer, c' : 'C')+'hoisissez vos 3 départements d\'intérêt.</p>' + all_deptmts + disclaimer 
 	next_steps = save_and_run()
 	btn_name = firsttime ? 'Suivant' : 'Enregistrer'
@@ -212,7 +237,7 @@ function get_nb_maj_to_save(){
 }
 
 function get_id_niveau_to_save(){
-	return user_data('id_niveau') || user_data('id_niveau')
+	return $('#niveau').val() || user_data('id_niveau')
 }
 
 async function save_my_datas(lets_show_all,callback){

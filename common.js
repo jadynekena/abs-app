@@ -26,6 +26,7 @@ async function send_my_details(forcing){
 		nom: user_data('nom'),
 		liste_departements: user_data('liste_departements'),
 		id_user: id_user,
+		id_niveau: user_data('id_niveau'),
 	}
 
 	if(forcing || (window.location.pathname !== '/' && !currently_local_host() && all_keys_have_value(my_details))){
