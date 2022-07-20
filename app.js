@@ -4,20 +4,17 @@ const SUPABASE_URL = "https://ojfpzzbgxyrtwmqolqwa.supabase.co"
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9qZnB6emJneHlydHdtcW9scXdhIiwicm9sZSI6ImFub24iLCJpYXQiOjE2NTc1MTU2OTMsImV4cCI6MTk3MzA5MTY5M30.Cw-t8RhhDHs0vKA6Q-zpQRL5JrX9vMX5g9oThszCEC4'
 const { createClient } = supabase
 var supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
-var my_departments = user_data('liste_departements');
-var myname = user_data('nom')
+var my_departments = user_data('liste_departements')
+var myname =  user_data('nom')
 const SEPARATOR = ';'
 
 
 async function init_spbs(){
+	supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 	var curr = current_access_token_exists()
 	const { user, error } = supabase.auth.setAuth(current_access_token_exists())
-	return supabase.auth.user()
-}
 
-async function init_spbs_demo(){
-	supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
-	return supabase
+	return supabase.auth.user()
 }
 
 function exactly_three_dptmts(list_with_commas){
@@ -36,6 +33,8 @@ function main(){
 			loading(false)
 		}, 500)
 	})
+
+	document.querySelector('.nav-links').addEventListener('click', hide_navbar_after_click_on_phone)
 }
 
 function first_arrival_handler(){
@@ -45,27 +44,70 @@ function first_arrival_handler(){
 		show_all(false)
 		account(true)
 	}else {
-		document.querySelector('#you').innerText = user_data('nom')
+		update_html_view()
 		iframe_setup()
 	}
 	
 }
 
-function user_details_inputs(){
+function update_html_view(){
+	update_username_locally()
+	show_my_departments()
+
+}
+
+async function show_my_departments(){
+	const supabase_local = createClient(SUPABASE_URL, SUPABASE_KEY);
+	res = await supabase_local.rpc('dep_from_uid',{mylist: my_departments})
+	if(res.data){
+		document.querySelector('#titleinterest').innerHTML = "Vos départements d'intérêt"
+		document.querySelector('#liste_dptmts').innerHTML = res.data.split(SEPARATOR).map(e => '<span onclick="interests(false)">'+e+'</span>').join('')
+	}
+}
+
+function update_username_locally(){
+	document.querySelector('#you').innerText = user_data('nom')
+}
+
+async function sub_levels(){
+	const supabase_local = createClient(SUPABASE_URL, SUPABASE_KEY);
+	const {data, error} = await supabase_local.from('niveaux').select('*').order('tarif_mensuel')
+	
+	if(data){
+
+		res  = data.map(e => '<option value="'+e['id_niveau']+'">'+e['etiquette_niveau'] + '     |     '
+																  + e['intitule_niveau'] + '     |     '
+																  + e['tarif_mensuel'] + ' € / mois' 
+
+							+'</option>' )
+	}else{
+		res = ''
+	}
+
+	return res
+}
+
+async function user_details_inputs(){
+	mymail = user_mail()
+	enable_level = is_demo() ? ' disabled ' : ''
 	return `<div class="user_details_inputs">
-				<input type="email" value="`+user_mail()+`" disabled="" autocomplete="off">
+				<input type="email" value="`+mymail+`" disabled="" autocomplete="off">
+				<select `+enable_level+` name="niveau" id="niveau">
+					<option value="">Choisissez votre niveau d'abonnement</option>
+					`+await sub_levels()+`
+				</select>
 				<input type="text" value="`+user_data('nom')+`" name="nom" id="nom" placeholder="Nom"  autocomplete="off">
 			</div>`
 }
 
 async function account(firsttime){
 	title = (firsttime ? welcome() : 'Mon compte') 
-	content = '<p>'+(firsttime ? '👤 Commençons par votre identité.' : '') +'</p>' 
-	content += user_details_inputs()
+	content = '<p>'+(firsttime ? '👤 Commençons par votre identité.' : '👤 Vos informations') +'</p>' 
+	content += await user_details_inputs()
 	content = '<div class="wrapper">'+content+'</div>'
 	next_steps = firsttime ? 'save_my_datas(false,"interests('+firsttime+')")' : save_and_run()
 	btn_name = firsttime ? 'Suivant' : 'Enregistrer'
-	show_popup(true,title,content,btn_name,false,true,next_steps)
+	show_popup(true,title,content,btn_name,!firsttime,true,next_steps)
 }
 
 function show_all(yes){
@@ -76,6 +118,8 @@ function set_clicks(){
 	on_event('click','#interests','interests(false)')
 	on_event('click','#account','account(false)')
 	on_event('click','#logout','logout()')
+	on_event('click','#keywords','alert("Fonctionnalité en cours de construction.")')
+
 }
 
 function my_selection(){
@@ -92,11 +136,9 @@ function value_selected(index_of_deptmt){
 }
 
 async function choice_departments(){
-	supabase = await init_spbs_demo()
-	const {data, error} = await supabase.from('liste_tout_departements').select('*')
-	supabase = await init_spbs()
-
-
+	const supabase_local = createClient(SUPABASE_URL, SUPABASE_KEY);
+	const {data, error} = await supabase_local.from('liste_tout_departements').select('*')
+	
 	const opt = (data || []).map((e,i) => '<option value="'+e['id_departement']+'">'+e['Departement']+'</option>')
 	return '<div class="select_container">' + new Array(3).fill(`<span class="one_select"><label for="listID">Département n°INDEX_DPTMT</label><select default="value_selected" id="listID">`+opt+`</select></span>`)
 														  .map((e,i) => e.replaceAll('listID','departement'+i).replaceAll('INDEX_DPTMT',(i+1)).replaceAll('value_selected',value_selected(i))   )
@@ -108,8 +150,10 @@ function welcome(){
 	return 'Bienvenue sur Amazon Best Sellers 👋'
 }
 
-function number_of_available_edits(){
-	return 5
+async function number_of_available_edits(){
+	const supabase_local = createClient(SUPABASE_URL, SUPABASE_KEY);
+	res = await supabase_local.rpc('number_of_available_edits',{ip: await myIP()})
+	return res.data
 }
 
 function save_and_run(){
@@ -119,7 +163,8 @@ function save_and_run(){
 async function interests(firsttime){
 	title = (firsttime ? welcome() : 'Mes intérêts') 
 	all_deptmts = await  choice_departments()
-	disclaimer = '<p>'+(firsttime ? 'Vous pourrez modifier ces valeurs jusqu\'à <strong id="nb_modifs">'+number_of_available_edits()+'</strong> fois plus tard.' : 'Nombre de modifications restantes: <strong id="nb_modifs">'+number_of_available_edits()+'</strong>')+'</p>'
+	remain = await number_of_available_edits()
+	disclaimer = '<p>'+(firsttime ? 'Vous pourrez modifier ces valeurs jusqu\'à <strong id="nb_modifs">'+remain+'</strong> fois plus tard.' : 'Nombre de modifications restantes: <strong id="nb_modifs">'+remain+'</strong>')+'</p>'
 	content = '<p>'+(firsttime ? 'Pour commencer, c' : 'C')+'hoisissez vos 3 départements d\'intérêt.</p>' + all_deptmts + disclaimer 
 	next_steps = save_and_run()
 	btn_name = firsttime ? 'Suivant' : 'Enregistrer'
@@ -162,18 +207,28 @@ function get_deptmts_to_save(){
 	return my_selection() || user_data('liste_departements')
 }
 
+function get_nb_maj_to_save(){
+	return user_data('nb_maj') || 0
+}
+
+function get_id_niveau_to_save(){
+	return user_data('id_niveau') || user_data('id_niveau')
+}
+
 async function save_my_datas(lets_show_all,callback){
 	//console.log({callback})
 
 	myname = get_name_to_save()
 	my_departments = get_deptmts_to_save()
+	nb_maj = get_nb_maj_to_save()
+	id_niveau = get_id_niveau_to_save()
 
 	my_datas = {
 		nom: myname,
-		liste_departements: my_departments
+		liste_departements: my_departments,
+		nb_maj: nb_maj,
+		id_niveau: id_niveau
 	} 
-
-	//console.log({my_datas})
 
 	show_all(lets_show_all)
 
@@ -197,15 +252,9 @@ async function save_my_datas(lets_show_all,callback){
 		eval(callback)	
 	} 
 	
-
-	//if demo -> tell it
-	if(user_mail() === 'demo@amazonbestsellers.org'){
-		send_my_IP()
-		send_my_name()
-	}
-
-
-
+	hist = await send_my_details(true)
+	console.log({hist})
+	update_html_view()
 	return my_datas
 
 }
@@ -237,20 +286,21 @@ async function show_popup(with_animation,title,html,btn_name,with_cancel,fullscr
 		showCloseButton: with_cancel,
 		showCancelButton: with_cancel,
 	}).then(function(result_swal){
-		console.log(result_swal)
+		//console.log(result_swal)
 		if(result_swal['isConfirmed'] && next_steps) eval(next_steps)
 		
 	})
 }
 
 function set_iframe(dptmts){
+	loading(true)
 	var view = document.getElementById('view')
 
 	var params = {}
 
-	params['fresh_datas.departement1'] = dptmts.split(SEPARATOR)[0]
-	params['fresh_datas.departement2'] = dptmts.split(SEPARATOR)[1]
-	params['fresh_datas.departement3'] = dptmts.split(SEPARATOR)[2]
+	params['fresh_datas.departement1'] = dptmts.split(SEPARATOR)[0] || 'unknown'
+	params['fresh_datas.departement2'] = dptmts.split(SEPARATOR)[1] || 'unknown'
+	params['fresh_datas.departement3'] = dptmts.split(SEPARATOR)[2] || 'unknown'
 
 
 	final_url = baseURL + '?params=' + encodeURIComponent(JSON.stringify(params))	 
@@ -258,6 +308,10 @@ function set_iframe(dptmts){
 
 	//console.log({final_url})
 	return final_url
+}
+
+function hide_navbar_after_click_on_phone(){
+	$('#nav-check')[0].checked = false
 }
 
 main()

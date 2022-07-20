@@ -9,34 +9,53 @@ function on_event(eventtype,selector, callback){
 }
 
 function main_common(){
-	document.addEventListener("DOMContentLoaded", send_my_IP)
+	document.addEventListener("DOMContentLoaded", function(){
+		setTimeout(function(){
+			send_my_details()
+		}, 1000)
+	})
+	
+	
+}
+
+async function send_my_details(forcing){
+	adresse_ip = await myIP()
+	id_user =  await who_is_connected()
+	my_details = {
+		adresse_ip:  adresse_ip,
+		nom: user_data('nom'),
+		liste_departements: user_data('liste_departements'),
+		id_user: id_user,
+	}
+
+	if(forcing || (window.location.pathname !== '/' && !currently_local_host() && all_keys_have_value(my_details))){
+		send_all(my_details)
+	}
+
+	return my_details
+}
+
+function all_keys_have_value(my_details){
+	var keyname = ''
+	keyname = Object.keys(my_details).find(function(key){
+		return my_details[key] === ''
+	})
+
+	return keyname && keyname.length === 0
+}
+
+function currently_local_host(){
+	return window.location.href.includes('localhost:')
 }
 
 main_common()
 
-async function send_my_IP(){
-	if(supabase){
-		try{
-			return  await supabase.from('demos').insert({adresse_ip:  await myIP() })	
-		}catch(e){
-			console.warn(e)
-		}
-		
-	}
+async function send_all(my_details){
+	const supabase_local = createClient(SUPABASE_URL, SUPABASE_KEY);
+	return  await supabase_local.from('historique').insert(my_details)	
+
 }
 
-async function send_my_name(){
-	if(supabase){
-		try{
-			return await supabase.from('demos')
-						  .update({nom: user_data('nom')})
-						  .match({adresse_ip:  await myIP() })	
-		}catch(e){
-			console.warn(e)
-		}
-		
-	}
-}
 
 async function myIP(){
 	adresse_ip = window.localStorage.getItem('adresse_ip') || await get_content('https://ipapi.co/ip/')
@@ -56,28 +75,20 @@ function loading(yes){
 	document.querySelector('.loading').style.display = yes ? 'block' : 'none'
 }
 
-function getDemoID(){
-	return fetch('/demoID.txt').then(function (response) {
-		return response.text();
-	}).then(function (txt) {
-		return txt
-	})
-}
-
 function current_access_token_exists(){
 	return 	window.localStorage.getItem('supabase.auth.token') ? JSON.parse(window.localStorage.getItem('supabase.auth.token'))['currentSession']['access_token'] : false
 }
 
 function user_details(){
-	return supabase ? supabase.auth.user() : {}
+	return supabase &&  supabase.auth ? supabase.auth.user() : {}
 }
 
 function user_mail(){
-	return user_details() && user_details().length > 0 ? user_details()['email'] : 'demo@amazonbestsellers.org'
+	return user_details() && Object.keys(user_details()).length > 0 ? user_details()['email'] : 'demo@amazonbestsellers.org'
 }
 
 function user_meta_datas(){
-	return  user_details() && user_details().length > 0 ? user_details()['user_metadata'] : {}
+	return  user_details() && Object.keys(user_details()).length > 0 ? user_details()['user_metadata'] : {}
 }
 
 function user_data(dataName){
@@ -95,7 +106,7 @@ function user_data(dataName){
 	*/
 
 	return (local_val && local_val.length > 0) ? local_val 
-			: (user_meta_datas().length > 0 && user_meta_datas()[dataName]) ? user_meta_datas()[dataName] 
+			: (Object.keys(user_meta_datas()).length > 0 && user_meta_datas()[dataName]) ? user_meta_datas()[dataName] 
 			: ""
 }
 
@@ -112,10 +123,14 @@ async function logout(){
 	setTimeout(function(){window.location.assign('/')},1000)
 }
 
+function is_demo(){
+	return user_mail() === 'demo@amazonbestsellers.org'
+}
+
 async function who_is_connected(){
 	me = user_details()
 
-	return me ? me['id'] : await getDemoID()
+	return me ? me['id'] : await get_content('/demoID.txt')
 }
 
 

@@ -60,7 +60,6 @@ function handle_access_token(){
 	if(curr_URL.includes('#access_token=') || current_access_token_exists()){		
 		document.querySelector('body').style.display = 'none'
 
-		window.localStorage.setItem('access_token', current_access_token_exists())
 		setTimeout(function(){
 			replace_outer_html()
 		}, 1000)
@@ -103,7 +102,7 @@ async function process_if_mail_exists(){
 	document.querySelector('.cgu_container').style.display= already_exists ? "none" : ""
 	set_alert((already_exists ? 'Un plaisir de vous revoir 🤗' : ''),'green')
 	change_disabled_btn()
-	
+
 }
 
 function main(){
