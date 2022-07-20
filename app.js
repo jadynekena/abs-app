@@ -4,48 +4,211 @@ const SUPABASE_URL = "https://ojfpzzbgxyrtwmqolqwa.supabase.co"
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9qZnB6emJneHlydHdtcW9scXdhIiwicm9sZSI6ImFub24iLCJpYXQiOjE2NTc1MTU2OTMsImV4cCI6MTk3MzA5MTY5M30.Cw-t8RhhDHs0vKA6Q-zpQRL5JrX9vMX5g9oThszCEC4'
 const { createClient } = supabase
 var supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
-
+var my_departments = user_data('liste_departements');
+const SEPARATOR = ';'
 
 
 async function init_spbs(){
-	var curr = current_access()
-	const { user, error } = supabase.auth.setAuth(current_access())
+	var curr = current_access_token_exists()
+	const { user, error } = supabase.auth.setAuth(current_access_token_exists())
 	return supabase.auth.user()
 }
-
-async function signOut() {
-  const { error } = await supabase.auth.signOut()
-}
-
-
-function current_access(){
-	return window.localStorage.getItem('supabase.auth.token') ? JSON.parse(window.localStorage.getItem('supabase.auth.token'))['currentSession']['access_token'] : false
-}
-
-
 
 function exactly_three_dptmts(list_with_commas){
 	return (list_with_commas.match(/,/g) || []).length === 2
 }
 
 function main(){
+	set_clicks()
 	init_spbs()
-	var my_departments = 'Animalerie,Informatique,Vêtements'
-	set_iframe(my_departments)
+	first_arrival_handler()
+}
+
+function first_arrival_handler(){
+	first_connection = Object.keys(user_meta_datas()).length === 0
+
+	if(first_connection){
+		show_all(false)
+		account(true) //then interests(true)
+	}else {
+		document.querySelector('#you').innerText = user_data('nom')
+		iframe_setup()
+	}
+	
+}
+
+function user_details_inputs(){
+	return `<div class="user_details_inputs">
+				<input type="email" value="`+user_mail()+`" disabled="" autocomplete="off">
+				<input type="text" value="`+user_data('nom')+`" name="nom" id="nom" placeholder="Nom"  autocomplete="off">
+			</div>`
+}
+
+async function account(firsttime){
+	title = (firsttime ? welcome() : 'Mon compte') 
+	content = '<p>'+(firsttime ? '👤 Commençons par votre identité.' : '') +'</p>' 
+	content += user_details_inputs()
+	content = '<div class="wrapper">'+content+'</div>'
+	next_steps = firsttime ? 'save_my_datas(false,"interests('+firsttime+')")' : save_and_run()
+	btn_name = firsttime ? 'Suivant' : 'Enregistrer'
+	show_popup(true,title,content,btn_name,false,true,next_steps)
+}
+
+function show_all(yes){
+	Array.from( document.querySelectorAll('.nav, .iframe_wrapper') ).forEach(e => e.style.display = yes ? '' : 'none' )
+}
+
+function set_clicks(){
+	on_event('click','#interests','interests(false)')
+	on_event('click','#account','account(false)')
+	on_event('click','#logout','logout()')
+}
+
+function my_selection(){
+	return $('select:visible').get().map(e => e.value).join(SEPARATOR)
+}
+
+function selected_if_right_item(my_departments,dptmt,index_of_deptmt){
+	return (my_departments && my_departments.split(SEPARATOR)[index_of_deptmt] === dptmt) ? 'selected' : ''
+} 
+
+function value_selected(index_of_deptmt){
+	//get departement of the index
+	return my_departments ? my_departments.split(SEPARATOR)[index_of_deptmt] : ""
+}
+
+async function choice_departments(){
+	const {data, error} = await supabase.from('liste_tout_departements').select('*')
+	const opt = (data || []).map((e,i) => '<option value="'+e['id_departement']+'">'+e['Departement']+'</option>')
+	return '<div class="select_container">' + new Array(3).fill(`<span class="one_select"><label for="listID">Département n°INDEX_DPTMT</label><select default="value_selected" id="listID">`+opt+`</select></span>`)
+														  .map((e,i) => e.replaceAll('listID','departement'+i).replaceAll('INDEX_DPTMT',(i+1)).replaceAll('value_selected',value_selected(i))   )
+														  .join(' ')
+		  + '</div>'
+}
+
+function welcome(){
+	return 'Bienvenue sur Amazon Best Sellers 👋'
+}
+
+function number_of_available_edits(){
+	return 5
+}
+
+function save_and_run(){
+	return  'save_my_datas(true,"iframe_setup()")' 
+}
+
+async function interests(firsttime){
+	title = (firsttime ? welcome() : 'Mes intérêts') 
+	all_deptmts = await  choice_departments()
+	disclaimer = '<p>'+(firsttime ? 'Vous pourrez modifier ces valeurs jusqu\'à <strong id="nb_modifs">'+number_of_available_edits()+'</strong> fois plus tard.' : 'Nombre de modifications restantes: <strong id="nb_modifs">'+number_of_available_edits()+'</strong>')+'</p>'
+	content = '<p>'+(firsttime ? 'Pour commencer, c' : 'C')+'hoisissez vos 3 départements d\'intérêt.</p>' + all_deptmts + disclaimer 
+	next_steps = save_and_run()
+	btn_name = firsttime ? 'Suivant' : 'Enregistrer'
+
+
+	opt = {
+		firsttime: firsttime,
+		title: title,
+		all_deptmts: all_deptmts,
+		content: content,
+		next_steps: next_steps,
+		btn_name: btn_name,
+		with_cancel: false,
+		fullscreen: true
+	}
+	change_or_create_popup_contents(opt)
+	$('select').get().map(e => e.value = e.getAttribute('default'))
 
 }
 
-function set_iframe(my_departments){
+function change_or_create_popup_contents(opt){
+	pop = document.querySelector('.swal2-popup')
+	if(pop){
+
+		pop.querySelector('#swal2-title').innerHTML = opt['title']
+		pop.querySelector('#swal2-html-container').innerHTML = opt['content']
+		pop.querySelector('button').innerHTML = opt['btn_name']
+
+	}else{
+		show_popup(!opt['firsttime'],opt['title'],opt['content'],opt['btn_name'],opt['with_cancel'],opt['fullscreen'],opt['next_steps'])
+	}
+
+}
+
+
+async function save_my_datas(lets_show_all,callback){
+	//console.log({callback})
+
+	my_departments = my_selection() || user_data('liste_departements')
+	//console.log({my_departments})
+
+	myname = $('#nom').val() || user_data('nom')
+	//console.log({myname})
+
+	my_datas = {
+		nom: myname,
+		liste_departements: my_departments
+	} 
+
+	show_all(lets_show_all)
+	const { user, error } = await supabase.auth.update({ 
+		data: my_datas
+	}).then(() => {
+
+		//console.log('UPDATING DONE !')
+
+		if(callback){
+			eval(callback)	
+		} 
+
+
+		//console.log('CALLBACK DONE')
+	})
+
+	return user
+
+}
+
+function iframe_setup(){
+	my_departments = user_data('liste_departements');
+	console.log({my_departments})
+	set_iframe(my_departments)
+}
+
+function logo(){
+	return `<img src="final-logo.png" alt="Amazon Best Sellers" style="width: 200px;display:block;">`
+}
+
+async function show_popup(with_animation,title,html,btn_name,with_cancel,fullscreen,next_steps){
+	return await Swal.fire({
+		animation: with_animation,
+		title: logo() +'<h1>' +  title + '</h1>',
+		html: html,
+		focusConfirm: false,
+		confirmButtonText:  btn_name,
+		cancelButtonText:  'Annuler',
+		confirmButtonColor: '#f70',
+		cancelButtonColor: '#9f9f9f',
+		customClass: fullscreen ? 'swal-wide' : '',
+		allowOutsideClick: with_cancel,
+		allowEscapeKey: with_cancel,
+		showCloseButton: with_cancel,
+		showCancelButton: with_cancel,
+	}).then(function(){
+		if(next_steps) eval(next_steps)
+	})
+}
+
+function set_iframe(dptmts){
 	var view = document.getElementById('view')
 
 	var params = {}
 
-	params["fresh_datas.dptmts"] = my_departments
-	if( exactly_three_dptmts(my_departments) ){
-		params['fresh_datas.departement1'] = my_departments.split(',')[0]
-		params['fresh_datas.departement2'] = my_departments.split(',')[1]
-		params['fresh_datas.departement3'] = my_departments.split(',')[2]
-	} 
+	params['fresh_datas.departement1'] = dptmts.split(SEPARATOR)[0]
+	params['fresh_datas.departement2'] = dptmts.split(SEPARATOR)[1]
+	params['fresh_datas.departement3'] = dptmts.split(SEPARATOR)[2]
+
 
 	final_url = baseURL + '?params=' + encodeURIComponent(JSON.stringify(params))	 
 	view.src = final_url

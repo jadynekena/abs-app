@@ -35,7 +35,25 @@ iframe{
 	border-radius: 20px;
 }
 
+.one_select {
+  display: grid;
+  padding: 10px;
+  border-style: solid;
+  border-width: 1px;
+  border-radius: 10px;
+  background-color: #fff9f3;
+}
 
+.swal-wide{
+    width:100vw !important;
+    height: 85vh !important;
+}
+
+.select_container{
+	display: grid;
+	grid-gap: 10px;
+	margin: 50px auto;
+}
 
 .nav {
   height: 50px;
@@ -126,4 +144,24 @@ iframe{
   }
 }
 
+.wrapper {
+  display: grid;
+  max-width: 400px;
+  margin: 0 auto;
+  padding: 20px;
+  border-radius: 10px;
+  background-color: #fff7ed;
+}
+
+.user_details_inputs * {
+  margin-top: 20px;
+  width: 100%;
+  padding: 5px;
+}
+[disabled] {
+  background-color: #d2d2d2;
+  font-style: oblique;
+  color: #8e8e8e;
+  cursor: not-allowed;
+}
 

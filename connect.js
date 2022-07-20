@@ -5,10 +5,23 @@ var supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
 async function signup(e){
 	e.preventDefault()
+	set_alert('','')
 
 	mymail = document.getElementById('mymail').value
 
-	if(mail_ok(mymail)){		
+	if(!mail_ok(mymail)){	
+		document.getElementById('mymail').focus()
+		set_alert('Merci de saisir une adresse mail valide.','red')
+
+		return false
+
+	}else if(!document.querySelector('#acceptCGU').checked){
+		set_alert('Vous devez accepter les conditions d\'utilisation avant de continuer.','red')
+
+		return false
+
+	}else {
+			
 		let { user, error } = await supabase.auth.signIn({
 			email: mymail			
 		}, {redirectTo: window.location.href })
@@ -17,22 +30,18 @@ async function signup(e){
 		if (error){
 			set_alert('ERREUR : ' + error.message,'red')
 		}else{
-			set_alert('Un mail avec un lien de connexion vous a été envoyé. Vérifiez vos spams si besoin.','green')
-			document.getElementById('connect').disabled = true
+			set_alert('Un mail avec un lien de connexion vous a été envoyé à <a href="mailto:'+mymail+'">'+mymail+'</a>. Vérifiez vos spams si besoin.','green')
+			Array.from( document.querySelectorAll('button, input, .cgu_container') ).forEach(e => e.remove())
 		}
 		
 		return {user,error}
-	}else {
-		document.getElementById('mymail').focus()
-		set_alert('Merci de saisir une adresse mail valide.','red')
-		return false
 	}
 }
 
 
 function set_alert(content,color){
 	ab = document.getElementById('alertbox')
-	ab.innerText = content
+	ab.innerHTML = content
 	ab.style.color = color
 }
 
@@ -74,13 +83,19 @@ async function replace_outer_html(){
 	window.location.assign('/' + final_word)
 }
 
+function change_disabled_btn(ceci){
+	console.log({ceci})
 
-
-function current_access_token_exists(){
-	return 	window.localStorage.getItem('supabase.auth.token') ? JSON.parse(window.localStorage.getItem('supabase.auth.token'))['currentSession']['access_token'] : false
+	if(!this.checked){
+		document.getElementById('connect').setAttribute('disabled',true)	
+	}else{
+		document.getElementById('connect').removeAttribute('disabled')
+	}
+	
 }
 
 function main(){
+	document.getElementById('acceptCGU').addEventListener('click', change_disabled_btn)
 	document.getElementById('connect').addEventListener('click', signup)
 	document.getElementById('mymail').addEventListener('keydown', function(event){
 		if(event.key === "Enter") signup(event)

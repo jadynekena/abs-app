@@ -1,0 +1,18 @@
+*{font-family:Arial;}
+a {
+  text-decoration: none;
+  color: #f90;
+  font-weight: bold;
+  padding: 10px;
+  background-color: #f4f4f4;
+  border-radius: 5px;
+}
+.all {
+	margin: auto;
+	margin-top: 50px;
+	padding: 40px 50px;
+	max-width: 70%;
+	border-radius: 5px;
+	background: #fff;
+	box-shadow: 1px 1px 1px 1px #666;
+}

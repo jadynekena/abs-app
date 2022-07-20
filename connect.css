@@ -8,12 +8,13 @@ body {
 
 .login {
   margin: auto;
-  margin-top: 20vh;
+  margin-top: 50px;
   padding: 40px 50px;
   max-width: 280px;
   border-radius: 5px;
   background: #fff;
   box-shadow: 1px 1px 1px #666;
+  height: 570px;
 }
 
 .login input, .login button {
@@ -89,13 +90,27 @@ body {
     text-align: center;    
   }
 
-.login a {
-  text-decoration: none;  
-  font-size: .8em;
+.cgu_container {
+  text-align: left;
+  display: inline-flex;
+  margin-top: 20px;
+  padding: 15px;
+  border-radius: 5px;
+  background-color: #fff9f3;
 }
 
-.login a:visited {
-  color: inherit;
+#acceptCGU{
+  width: min-content;
+  margin-right: 10px;
+}
+
+.mandatory::before {
+  content: '*';
+  color: red;
+}
+
+.login a, .login a:visited {
+  color: #06c;
 }
 
 .login a:hover {

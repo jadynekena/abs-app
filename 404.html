@@ -7,6 +7,7 @@
 	<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
 	<link rel="stylesheet" href="/app.css">
 	<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+	<script type="text/javascript" src="/common.js"></script>
 </head>
 <body>
 
@@ -16,7 +17,7 @@
 
 		<div class="nav-header">
 			<div class="nav-title">
-				Bienvenue <strong id="you">Username</strong> 👋
+				Bienvenue <strong id="you"></strong> 👋
 			</div>
 		</div>
 
@@ -29,10 +30,7 @@
 		</div>
 
 		<div class="nav-links">
-			<a >Mes intérêts</a>
-			<a >Mes mots-clés</a>
-			<a >Mon compte</a>
-			<a >Déconnexion</a>
+			<a id="interests">Mes intérêts</a><a id="keywords">Mes mots-clés</a><a id="account">Mon compte</a><a id="logout">Déconnexion</a>
 		</div>
 	</div>
 
@@ -42,7 +40,6 @@
 	</div>
 
 	<script src="/app.js"></script>
-	<script type="text/javascript" src="/common.js"></script>
 
 </body>
 </html>
