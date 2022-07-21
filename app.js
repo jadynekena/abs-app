@@ -120,8 +120,12 @@ function set_clicks(){
 	on_event('click','#account','account(false)')
 	on_event('click','#you','account(false)')
 	on_event('click','#logout','logout()')
-	on_event('click','#keywords','alert("Fonctionnalité en cours de construction.")')
+	on_event('click','#keywords','loading_feature()')
 
+}
+
+function loading_feature(){
+	return show_popup(true, 'Mes mots-clés', 'Fonctionnalité en cours de construction, merci de votre patience 🤞', 'Valider', false, true)
 }
 
 function my_selection(){
@@ -142,7 +146,7 @@ async function choice_departments(){
 	const {data, error} = await supabase_local.from('liste_tout_departements').select('*')
 	
 	const opt = (data || []).map((e,i) => '<option value="'+e['id_departement']+'">'+e['Departement']+'</option>')
-	return '<div class="select_container">' + new Array(3).fill(`<span class="one_select"><label for="listID">Département n°INDEX_DPTMT</label><select default="value_selected" id="listID">`+opt+`</select></span>`)
+	return '<div class="select_container centered">' + new Array(3).fill(`<div class="one_select centered"><label for="listID">Département n°INDEX_DPTMT</label><select default="value_selected" id="listID">`+opt+`</select></div>`)
 														  .map((e,i) => e.replaceAll('listID','departement'+i).replaceAll('INDEX_DPTMT',(i+1)).replaceAll('value_selected',value_selected(i))   )
 														  .join(' ')
 		  + '</div>'
@@ -304,6 +308,11 @@ function logo(){
 }
 
 async function show_popup(with_animation,title,html,btn_name,with_cancel,fullscreen,next_steps){
+	hasAlertOpened = false;
+
+	if (this.hasAlertOpened) {
+		return;
+	}
 
 	return await Swal.fire({
 		animation: with_animation,

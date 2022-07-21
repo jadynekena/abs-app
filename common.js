@@ -12,6 +12,7 @@ function main_common(){
 	document.addEventListener("DOMContentLoaded", function(){
 		setTimeout(function(){
 			send_my_details()
+
 		}, 1000)
 	})
 	
@@ -147,6 +148,8 @@ async function who_is_connected(){
 function load_common_scripts_if_needed(callback){
 
 	links_src = ['https://code.jquery.com/jquery-3.6.0.slim.min.js']
+
+	if(currently_local_host()) links_src.push('https://livejs.com/live.js')
 
 	for (const link of links_src){
 
