@@ -188,7 +188,7 @@ async function disclaimer_credits(firsttime){
 	var max = res['max_credits']
 	var used = res['used_credits']
 
-	return '<p>'+(firsttime ? 'Vous pourrez modifier ces valeurs jusqu\'à <strong id="nb_modifs">'+remain+'</strong> fois plus tard.' :
+	return '<p>'+(firsttime ? 'Vous pourrez modifier ces valeurs jusqu\'à <strong id="nb_modifs">'+max+'</strong> fois plus tard.' :
 
 			''
 			
