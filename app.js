@@ -104,7 +104,6 @@ async function account(firsttime){
 	title = (firsttime ? welcome() : 'Mon compte') 
 	content = '<p>'+(firsttime ? '👤 Commençons par votre identité.' : '👤 Vos informations') +'</p>' 
 	content += await user_details_inputs()
-	content = '<div class="wrapper">'+content+'</div>'
 	next_steps = firsttime ? 'save_my_datas(false,"interests('+firsttime+')")' : save_and_run()
 	btn_name = firsttime ? 'Suivant' : 'Enregistrer'
 	show_popup(true,title,content,btn_name,!firsttime,true,next_steps)
@@ -119,6 +118,7 @@ function show_all(yes){
 function set_clicks(){
 	on_event('click','#interests','interests(false)')
 	on_event('click','#account','account(false)')
+	on_event('click','#you','account(false)')
 	on_event('click','#logout','logout()')
 	on_event('click','#keywords','alert("Fonctionnalité en cours de construction.")')
 
@@ -180,10 +180,13 @@ async function disclaimer_credits(firsttime){
 
 	return '<p>'+(firsttime ? 'Vous pourrez modifier ces valeurs jusqu\'à <strong id="nb_modifs">'+remain+'</strong> fois plus tard.' :
 
+			''
+			
+			+
 			'Nombre de modifications MAXIMAL: <strong>'+max+'</strong><br/>' +
 			'Nombre de modifications utilisées: <strong>'+used+'</strong><br/>' +
 			'Nombre de modifications restantes: <strong>'+remain+'</strong><br/>' 
-
+			
 
 			) +'</p>'
 }
@@ -297,7 +300,7 @@ function iframe_setup(){
 }
 
 function logo(){
-	return `<img src="final-logo.png" alt="Amazon Best Sellers" style="width: 200px;display:block;">`
+	return `<img src="final-logo.png" alt="Amazon Best Sellers" style="width: 10vh;display: block;min-width: 125px;">`
 }
 
 async function show_popup(with_animation,title,html,btn_name,with_cancel,fullscreen,next_steps){
@@ -305,7 +308,7 @@ async function show_popup(with_animation,title,html,btn_name,with_cancel,fullscr
 	return await Swal.fire({
 		animation: with_animation,
 		title: logo() +'<h1>' +  title + '</h1>',
-		html: html,
+		html: '<div class="wrapper">'+html+'</div>',
 		focusConfirm: false,
 		confirmButtonText:  btn_name,
 		cancelButtonText:  'Annuler',
