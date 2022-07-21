@@ -211,7 +211,7 @@ function url_referrer_in_heads(){
 		//add all new headers
 		headers_obj['Access-Control-Allow-Origin'] = '*'
 		headers_obj['X-Current-Top-URL'] = current_top_url()
-		headers_obj['X-Current-User'] = await who_is_connected() 
+		headers_obj['X-Current-User'] = 'id user here' //await who_is_connected() 
 		headers_obj['mode'] = 'cors' //always cors
 
 		//append new headers
@@ -236,7 +236,7 @@ function url_referrer_in_heads(){
 			if(!response){
 				console.error('\n\n\n\n------ERROR--------' ,err)	
 			}else{
-				alert('error but we have this: ',response)
+				//alert('error but we have this: ',response)
 			}
 		})
 		;
