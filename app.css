@@ -221,3 +221,10 @@ iframe{
 #liste_dptmts *:hover{
   background-color: rgb(242, 242, 242);
 }
+
+.logo {
+   position: fixed;
+   width: 50px;
+   left: 0;
+   display: none;
+}

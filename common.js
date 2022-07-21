@@ -182,3 +182,11 @@ function current_top_url(){
 function url_referrer_in_heads(){
 	//todo : { Current-URL: current_top_url() }
 }
+
+function inIframe() {
+    try {
+        return window.self !== window.top;
+    } catch (e) {
+        return true;
+    }
+}

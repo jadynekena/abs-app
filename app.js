@@ -23,6 +23,7 @@ function exactly_three_dptmts(list_with_commas){
 
 function main(){
 
+	show_logo()
 	set_clicks()
 	init_spbs()
 	first_arrival_handler()
@@ -35,6 +36,15 @@ function main(){
 	})
 
 	document.querySelector('.nav-links').addEventListener('click', hide_navbar_after_click_on_phone)
+}
+
+function show_logo(){
+
+	//only if not in iframe
+	if(!inIframe()){
+		document.querySelector('.logo').style.display = 'initial';
+	}
+
 }
 
 function first_arrival_handler(){
