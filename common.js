@@ -19,10 +19,14 @@ function main_common(){
 	
 }
 
+async function user_niveau(){
+	return user_data('id_niveau') || await free_niveau()
+}
+
 async function send_my_details(forcing){
 	adresse_ip = await myIP()
 	id_user =  await who_is_connected()
-	id_niveau =  await get_id_niveau_to_save()
+	id_niveau =  await  user_niveau()
 	my_details = {
 		adresse_ip:  adresse_ip,
 		nom: user_data('nom'),

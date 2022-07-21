@@ -260,7 +260,7 @@ function get_nb_maj_to_save(){
 }
 
 async function get_id_niveau_to_save(){
-	return $('#niveau').val() || user_data('id_niveau') || await free_niveau()
+	return $('#niveau').val() || user_niveau()
 }
 
 async function save_my_datas(lets_show_all,callback){
