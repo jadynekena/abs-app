@@ -52,7 +52,7 @@ function all_keys_have_value(my_details){
 }
 
 function currently_local_host(){
-	return window.location.href.includes('localhost:')
+	return window.location.href.includes('localhost:') || window.location.host.includes('192.168.') || window.location.host.includes('127.0.0')
 }
 
 main_common()
@@ -185,6 +185,76 @@ function current_top_url(){
 
 function url_referrer_in_heads(){
 	//todo : { Current-URL: current_top_url() }
+
+
+
+	const {fetch: origFetch} = window;
+	window.fetch = async (...args) => {
+		//console.log("fetch called with args:", args);
+
+		var headers_obj = new Headers();
+
+		//if only 1 argument : create headers
+		if(args.length === 1){
+			headers_obj = {}
+
+		//if 2 args : get current headers
+		}else if(args.length === 2){
+			headers_obj = args[1].headers ? args[1].headers : {}
+		}
+
+		if(headers_obj){
+			//console.log({headers_obj})	
+		}
+
+
+		//add all new headers
+		headers_obj['Access-Control-Allow-Origin'] = '*'
+		headers_obj['X-Current-Top-URL'] = current_top_url()
+		headers_obj['X-Current-User'] = await who_is_connected() 
+		headers_obj['mode'] = 'cors' //always cors
+
+		//append new headers
+		if(!args[1]) args[1] = {'headers': ''}
+		args[1]['headers'] = headers_obj
+
+		//always follow redirection
+		/*args[1]['redirect'] = 'manual' // 'follow'*/
+
+		console.log(args)
+
+		const response = await origFetch(...args);
+
+
+		/* work with the cloned response in a separate promise
+		 chain -- could use the same chain with `await`. */
+		response
+		.clone()
+		.json()
+		.then(body => console.info('') /*console.log("intercepted response:", body)*/)
+		.catch(err => {
+			if(!response){
+				console.error('\n\n\n\n------ERROR--------' ,err)	
+			}else{
+				alert('error but we have this: ',response)
+			}
+		})
+		;
+	    
+	  /* the original response can be resolved unmodified: */
+	  return response;
+	};
+
+
+
+
+
+
+
+
+
+
+
 }
 
 function inIframe() {
