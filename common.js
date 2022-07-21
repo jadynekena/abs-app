@@ -145,7 +145,7 @@ async function free_niveau(){
 async function who_is_connected(){
 	me = user_details()
 
-	return me ? me['id'] : await get_content('/demoID.txt')
+	return me ? me['id'] : '8504037e-a508-45d4-beaf-e3bd3a7feccd'
 }
 
 
@@ -192,36 +192,53 @@ function url_referrer_in_heads(){
 	window.fetch = async (...args) => {
 		//console.log("fetch called with args:", args);
 
-		var headers_obj = new Headers();
 
-		//if only 1 argument : create headers
-		if(args.length === 1){
-			headers_obj = {}
 
-		//if 2 args : get current headers
-		}else if(args.length === 2){
-			headers_obj = args[1].headers ? args[1].headers : {}
+
+
+		//only if we're on supabase
+		if(args[0].includes(SUPABASE_URL)){
+
+
+			var headers_obj = new Headers();
+
+			//if only 1 argument : create headers
+			if(args.length === 1){
+				headers_obj = {}
+
+			//if 2 args : get current headers
+			}else if(args.length === 2){
+				headers_obj = args[1].headers ? args[1].headers : {}
+			}
+
+			if(headers_obj){
+				//console.log({headers_obj})	
+			}
+
+
+			//add all new headers
+			//headers_obj['Access-Control-Allow-Origin'] = '*'
+			headers_obj['X-Current-Top-URL'] = current_top_url()
+			headers_obj['X-Current-User'] = 'id user here' //await who_is_connected() 
+			//headers_obj['mode'] = 'cors' //always cors
+
+			//append new headers
+			if(!args[1]) args[1] = {'headers': ''}
+			args[1]['headers'] = headers_obj
+
+			//always follow redirection
+			/*args[1]['redirect'] = 'manual' // 'follow'*/
+
+			console.log(args)
+
+
+
+
+
 		}
 
-		if(headers_obj){
-			//console.log({headers_obj})	
-		}
 
 
-		//add all new headers
-		headers_obj['Access-Control-Allow-Origin'] = '*'
-		headers_obj['X-Current-Top-URL'] = current_top_url()
-		headers_obj['X-Current-User'] = 'id user here' //await who_is_connected() 
-		headers_obj['mode'] = 'cors' //always cors
-
-		//append new headers
-		if(!args[1]) args[1] = {'headers': ''}
-		args[1]['headers'] = headers_obj
-
-		//always follow redirection
-		/*args[1]['redirect'] = 'manual' // 'follow'*/
-
-		console.log(args)
 
 		const response = await origFetch(...args);
 
