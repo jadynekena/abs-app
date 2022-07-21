@@ -94,8 +94,12 @@ iframe{
   background-color: #fff7ed;
   text-align: center;
   margin: 0 auto;
-  width: 90vw;
+  /*width: 90vw;*/
   max-width: 500px;
+}
+
+.swal2-popup:not(.swal-wide){
+  padding: 50px;
 }
 
 .nav {

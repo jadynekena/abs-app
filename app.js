@@ -43,6 +43,7 @@ function show_logo(){
 	//only if not in iframe
 	if(!inIframe()){
 		document.querySelector('.logo').style.display = 'initial';
+		document.querySelector('.logo').parentNode.href =  window.location.pathname
 	}
 
 }
@@ -116,7 +117,7 @@ async function account(firsttime){
 	content += await user_details_inputs()
 	next_steps = firsttime ? 'save_my_datas(false,"interests('+firsttime+')")' : save_and_run()
 	btn_name = firsttime ? 'Suivant' : 'Enregistrer'
-	show_popup(true,title,content,btn_name,!firsttime,true,next_steps)
+	show_popup(true,title,content,btn_name,!firsttime,firsttime,next_steps)
 
 	$('#niveau')[0].value = user_data('id_niveau')
 }
@@ -135,7 +136,7 @@ function set_clicks(){
 }
 
 function loading_feature(){
-	return show_popup(true, 'Mes mots-clés', 'Fonctionnalité en cours de construction, merci de votre patience 🤞', 'Valider', false, true)
+	return show_popup(true, 'Mes mots-clés', 'Fonctionnalité en cours de construction, merci de votre patience 🤞', 'Valider', false, false)
 }
 
 function my_selection(){
@@ -226,7 +227,7 @@ async function interests(firsttime){
 		next_steps: next_steps,
 		btn_name: btn_name,
 		with_cancel: with_cancel,
-		fullscreen: true
+		fullscreen: firsttime
 	}
 	change_or_create_popup_contents(opt)
 	$('select').get().map(e => e.value = e.getAttribute('default'))
