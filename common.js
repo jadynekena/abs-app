@@ -106,8 +106,8 @@ function user_data(dataName){
 	console.log({[dataName]: local_val})	
 	*/
 
-	return (local_val && local_val.length > 0) ? local_val 
-			: (Object.keys(user_meta_datas()).length > 0 && user_meta_datas()[dataName]) ? user_meta_datas()[dataName] 
+	return (local_val && local_val.length > 0) ? local_val.trim()
+			: (Object.keys(user_meta_datas()).length > 0 && user_meta_datas()[dataName]) ? user_meta_datas()[dataName].trim()
 			: ""
 }
 

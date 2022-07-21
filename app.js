@@ -31,7 +31,7 @@ function main(){
 		if(e.target.innerText.length > 0) loading(true)
 		setTimeout(function(){
 			loading(false)
-		}, 500)
+		}, 800)
 	})
 
 	document.querySelector('.nav-links').addEventListener('click', hide_navbar_after_click_on_phone)
@@ -160,7 +160,13 @@ async function number_of_available_edits(){
 async function all_credits(){
 	const supabase_local = createClient(SUPABASE_URL, SUPABASE_KEY);
 	me = await who_is_connected() ; 
-	res = await supabase_local.rpc('user_credits',{'id_user':me});
+	to_send = {
+		'id_user':me,
+	}
+
+	if(is_demo()) to_send['adresse_ip_str'] = await myIP();
+
+	res = await supabase_local.rpc('user_credits',to_send);
 
 	return res.data && res.data[0] ? res.data[0] : {}
 
