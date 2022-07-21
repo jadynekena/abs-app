@@ -9,10 +9,10 @@ function on_event(eventtype,selector, callback){
 }
 
 function main_common(){
+	url_referrer_in_heads() //always send referrer
 	document.addEventListener("DOMContentLoaded", function(){
 		setTimeout(function(){
 			send_my_details()
-
 		}, 1000)
 	})
 	
@@ -165,4 +165,20 @@ function load_common_scripts_if_needed(callback){
 	}
 
 	if(callback) callback()
+}
+
+function current_top_url(){
+	try{
+		res = window.top.location.href 
+
+	}catch(err){
+		console.error(err)
+		res = document.referrer
+	}
+	//console.log("TOP URL = " + res)
+	return res
+}
+
+function url_referrer_in_heads(){
+	//todo : { Current-URL: current_top_url() }
 }
