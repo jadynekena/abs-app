@@ -348,5 +348,11 @@ function hide_navbar_after_click_on_phone(){
 	$('#nav-check')[0].checked = false
 }
 
+
+function loading(yes){
+	document.querySelector('.loading').style.display = yes ? 'block' : 'none'
+}
+
+
 main()
 

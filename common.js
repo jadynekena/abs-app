@@ -73,10 +73,6 @@ async function get_content(url){
 	})
 }
 
-function loading(yes){
-	document.querySelector('.loading').style.display = yes ? 'block' : 'none'
-}
-
 function current_access_token_exists(){
 	return 	window.localStorage.getItem('supabase.auth.token') ? JSON.parse(window.localStorage.getItem('supabase.auth.token'))['currentSession']['access_token'] : false
 }
