@@ -77,11 +77,6 @@ async function replace_outer_html(){
 	window.location.assign('/' + final_word)
 }
 
-async function getDemoID(){
-	res =  await supabase.from('users').select('id').eq('is_default',true).limit(1)
-	return res.data && res.data[0] ? res.data[0]['id'] : await get_content('/demoID.txt')
-}
-
 function change_disabled_btn(ceci){
 	
 	if(!document.querySelector('#acceptCGU').checked){

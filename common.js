@@ -74,12 +74,24 @@ async function myIP(){
 	return adresse_ip
 }
 
-async function get_content(url){
-	return await fetch(url).then(function (response) {
-		return response.text();
-	}).then(function (txt) {
-		return txt
-	})
+async function get_content(url,sync_mode){
+
+	if(!sync_mode){
+
+		return await fetch(url).then(function (response) {
+			return response.text();
+		}).then(function (txt) {
+			return txt
+		})
+	}else{
+		const request = new XMLHttpRequest();
+		request.open('GET', url, false);  // `false` makes the request synchronous
+		request.send(null);
+
+		if (request.status === 200) {
+			return request.responseText
+		}
+	}
 }
 
 
@@ -140,6 +152,11 @@ function is_demo(){
 	return user_mail() === 'demo@amazonbestsellers.org'
 }
 
+async function getDemoID(){
+	res =  await supabase.from('users').select('id').eq('is_default',true).limit(1)
+	return res.data && res.data[0] ? res.data[0]['id'] : await get_content('/demoID.txt',true)
+}
+
 async function free_niveau(){	
 	const supabase_local = createClient(SUPABASE_URL, SUPABASE_KEY);
 	res = await supabase_local.from('niveaux').select('id_niveau').eq('etiquette_niveau','FREE')
@@ -149,7 +166,7 @@ async function free_niveau(){
 async function who_is_connected(){
 	me = user_details()
 
-	return me ? me['id'] : '8504037e-a508-45d4-beaf-e3bd3a7feccd'
+	return me ? me['id'] :  await get_content('/demoID.txt',true)
 }
 
 
@@ -223,7 +240,7 @@ function url_referrer_in_heads(){
 			//add all new headers
 			//headers_obj['Access-Control-Allow-Origin'] = '*'
 			headers_obj['X-Current-Top-URL'] = current_top_url()
-			headers_obj['X-Current-User'] = 'id user here' //await who_is_connected() 
+			headers_obj['X-Current-User'] =  await who_is_connected() 
 			//headers_obj['mode'] = 'cors' //always cors
 
 			//append new headers
