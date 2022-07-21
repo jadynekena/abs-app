@@ -79,7 +79,7 @@ async function sub_levels(){
 																  + e['intitule_niveau'] + '     |     '
 																  + e['tarif_mensuel'] + ' € / mois' 
 
-							+'</option>' )
+							+'</option>' ).join('')
 	}else{
 		res = ''
 	}
@@ -242,8 +242,8 @@ function get_nb_maj_to_save(){
 	return user_data('nb_maj') || 0
 }
 
-function get_id_niveau_to_save(){
-	return $('#niveau').val() || user_data('id_niveau')
+async function get_id_niveau_to_save(){
+	return $('#niveau').val() || user_data('id_niveau') || await free_niveau()
 }
 
 async function save_my_datas(lets_show_all,callback){
@@ -252,7 +252,7 @@ async function save_my_datas(lets_show_all,callback){
 	myname = get_name_to_save()
 	my_departments = get_deptmts_to_save()
 	nb_maj = get_nb_maj_to_save()
-	id_niveau = get_id_niveau_to_save()
+	id_niveau = await get_id_niveau_to_save()
 
 	my_datas = {
 		nom: myname,

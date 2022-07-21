@@ -21,12 +21,13 @@ function main_common(){
 async function send_my_details(forcing){
 	adresse_ip = await myIP()
 	id_user =  await who_is_connected()
+	id_niveau =  await get_id_niveau_to_save()
 	my_details = {
 		adresse_ip:  adresse_ip,
 		nom: user_data('nom'),
 		liste_departements: user_data('liste_departements'),
 		id_user: id_user,
-		id_niveau: user_data('id_niveau'),
+		id_niveau: id_niveau,
 	}
 
 	if(forcing || (window.location.pathname !== '/' && !currently_local_host() && all_keys_have_value(my_details))){
@@ -126,6 +127,12 @@ async function logout(){
 
 function is_demo(){
 	return user_mail() === 'demo@amazonbestsellers.org'
+}
+
+async function free_niveau(){	
+	const supabase_local = createClient(SUPABASE_URL, SUPABASE_KEY);
+	res = await supabase_local.from('niveaux').select('id_niveau').eq('etiquette_niveau','FREE')
+	return res && res.data && res.data[0] ? res.data[0]['id_niveau'] : ""
 }
 
 async function who_is_connected(){
