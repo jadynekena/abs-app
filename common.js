@@ -229,7 +229,7 @@ function url_referrer_in_heads(){
 			//always follow redirection
 			/*args[1]['redirect'] = 'manual' // 'follow'*/
 
-			console.log(args)
+			//console.log(args)
 
 
 
