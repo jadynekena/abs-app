@@ -1,8 +1,3 @@
-const SUPABASE_URL = "https://ojfpzzbgxyrtwmqolqwa.supabase.co"
-const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9qZnB6emJneHlydHdtcW9scXdhIiwicm9sZSI6ImFub24iLCJpYXQiOjE2NTc1MTU2OTMsImV4cCI6MTk3MzA5MTY5M30.Cw-t8RhhDHs0vKA6Q-zpQRL5JrX9vMX5g9oThszCEC4'
-const { createClient } = supabase
-var supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
-
 async function signup(e){
 	e.preventDefault()
 	set_alert('','')
