@@ -87,11 +87,19 @@ function change_disabled_btn(ceci){
 	
 }
 
-async function process_if_mail_exists(){
+async function process_if_mail_exists(force_not_exist){
+	//console.log({force_not_exist})
 
-	const { data, error } = await supabase.rpc('mail_exists', { mail: document.getElementById('mymail').value })
+	if(force_not_exist){
 
-	already_exists = data
+		already_exists = false
+
+	}else{
+		const { data, error } = await supabase.rpc('mail_exists', { mail: document.getElementById('mymail').value })
+		already_exists = data
+
+	}
+
 
 	document.querySelector('#acceptCGU').checked = already_exists
 	document.querySelector('.cgu_container').style.display= already_exists ? "none" : ""
@@ -104,7 +112,11 @@ function on_mail_change(event){
 	//
 
 	if(event.key === "Enter") signup(event)
-	if(mail_ok(document.getElementById('mymail').value)) process_if_mail_exists()
+	if(mail_ok(document.getElementById('mymail').value)) {
+		process_if_mail_exists(false)
+	}else{
+		process_if_mail_exists(true)
+	}
 
 
 }

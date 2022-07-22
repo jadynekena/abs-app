@@ -102,6 +102,10 @@ iframe{
   padding: 50px;
 }
 
+.swal2-shown {
+  overflow: hidden;
+}
+
 .nav {
   height: 50px;
   width: 100%;
