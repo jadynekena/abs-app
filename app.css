@@ -297,6 +297,7 @@ iframe{
 
   #menu-check:checked ~ .top-tabs-container {
     display: grid;
+    grid-auto-flow: row;
   }
 
   #user-menu {
