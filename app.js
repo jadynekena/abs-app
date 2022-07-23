@@ -417,8 +417,19 @@ function set_iframe(dptmts,forcing){
 
 	setTimeout(function(){
 
+		//update only visible frame
 		const visible_iframe_id = current_visible_iframe_id()
 		assign_iframe_url(visible_iframe_id,forcing)
+
+		//unassign other iframes if forcing
+		if(forcing){
+			list_of_iframes_id.forEach(function(e){
+				if(e !== visible_iframe_id){
+					document.getElementById(e).src = ""	
+				}
+			})
+		}
+
 
 	}, 10)
 
