@@ -18,7 +18,7 @@ function exactly_three_dptmts(list_with_commas){
 }
 
 function main(){
-
+	apply_theme()
 	show_logo()
 	set_clicks()
 	init_spbs()
@@ -139,7 +139,13 @@ function set_clicks(){
 async function toggle_light(){
 	$('html').toggleClass('nuit')
 	mydatas = await save_my_datas(true)
-	console.log({mydatas})
+	//console.log({mydatas})
+}
+
+function apply_theme(){
+	if(user_data('mode') && user_data('mode') === 'nuit') {
+		document.querySelector('html').className = "nuit"
+	}
 }
 
 function hide_back_menu(ceci){
@@ -341,7 +347,7 @@ async function save_my_datas(lets_show_all,callback){
 	} 
 	
 	hist = await send_my_details(true)
-	console.log({hist})
+	//console.log({hist})
 	update_html_view()
 	return my_datas
 
@@ -354,7 +360,7 @@ function iframe_setup(){
 }
 
 function logo(){
-	return `<img src="/final-logo.png" alt="Amazon Best Sellers" class="local-logo">`
+	return inIframe() ? "" : `<img src="/final-logo.png" alt="Amazon Best Sellers" class="local-logo">`
 }
 
 async function show_popup(with_animation,title,html,btn_name,with_cancel,fullscreen,next_steps){

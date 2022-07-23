@@ -7,7 +7,7 @@
 	box-sizing: border-box;
 }
 *, *:hover {
-    transition: all 0.3s ease-in;
+    /*transition: all 0.3s ease-in;*/
 }
 .nuit { filter: invert(1) hue-rotate(180deg) ; }
 .nuit .ignore { filter: invert(1) hue-rotate(180deg) ; }
