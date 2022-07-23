@@ -41,9 +41,150 @@
 	  </div>
 	</div>
 
-	<div class="iframe_wrapper">
-	<iframe id="view" width="100%" height="100%" frameborder="0" style="border:0" allowfullscreen="" onload="document.querySelector('.loading').style.display = 'none'"></iframe>
-	</div>
+<section class="whole-body">
+
+
+
+	<section>
+		<div class="top-tabs-wrap">
+			<input type="checkbox" id="menu-check">
+			<label id="user-menu" for="menu-check">Chiffres clés et données brutes du jour</label>
+			<div class="top-tabs-container">
+				<label class="tab" for="main-tab-1">Chiffres clés et données brutes du jour</label>			
+				<label class="tab" for="main-tab-2">Zoom sur les départements</label>
+				<label class="tab" for="main-tab-3">Zoom sur les produits</label>
+				<label class="tab" for="main-tab-4">Questions - Réponses</label>
+			</div>
+		</div>
+
+	  <!-- Tab Container 1 -->
+	  <input class="tab-radio" id="main-tab-1" name="main-group" type="radio" checked="checked"/>
+	  <div class="tab-content">
+	    <div class="sub-tabs-container">
+	      <label for="sub-tab-1">Chiffres clés</label>
+	      <label for="sub-tab-2">Données brutes</label>
+	    </div>
+	    <!-- Chiffres clés -->
+	    <input class="tab-radio" id="sub-tab-1" name="sub-group" type="radio" checked="checked">
+	    <div class="sub-tab-content">
+	      	<div class="iframe_wrapper">
+				<iframe id="kpi" width="100%" height="100%" frameborder="0" style="border:0" allowfullscreen="" onload="document.querySelector('.loading').style.display = 'none'"></iframe>
+			</div>
+	    </div>
+	    <!-- Données brutes -->
+	    <input class="tab-radio" id="sub-tab-2" name="sub-group" type="radio">
+	    <div class="sub-tab-content">
+	      	<div class="iframe_wrapper">
+				<iframe id="raw_datas" width="100%" height="100%" frameborder="0" style="border:0" allowfullscreen="" onload="document.querySelector('.loading').style.display = 'none'"></iframe>
+			</div>
+	    </div>
+	  </div>
+
+	  <!-- Tab Container 2 -->
+	  <input class="tab-radio" id="main-tab-2" name="main-group" type="radio"/>
+	  <div class="tab-content">
+	    <div class="sub-tabs-container">
+	    <!-- NOTE: due to id note below, remember to match the for.
+	    The actual title doesn't matter, just to show it works... -->
+	      <label for="sub-tab2-1">Sub-Tab 3</label>
+	      <label for="sub-tab2-2">Sub-Tab 4</label>
+	    </div>
+	    <!-- Sub Tab -->
+	    <!-- NOTE: name="sub-group" will require to be unique to the tab, 
+	          ie: tab2 = sub-group2, tab3 = sub-group 3 etc. -->
+	    <!-- NOTE: id have to be unique. So for each sub tabs, the input id will have to change -->
+	    <input class="tab-radio" id="sub-tab2-1" name="sub-group2" type="radio" checked="checked">
+	    <div class="sub-tab-content">
+	      <h1>Sub-Tab 3</h1>
+	    </div>
+	    <!-- Sub Tab -->
+	    <input class="tab-radio" id="sub-tab2-2" name="sub-group2" type="radio">
+	    <div class="sub-tab-content">
+	      <h1>Sub-Tab 4</h1>
+	    </div>
+	  </div>
+
+	  <!-- Tab Container 3 -->
+	  <input class="tab-radio" id="main-tab-3" name="main-group" type="radio"/>
+	  <div class="tab-content">
+	    <div class="sub-tabs-container">
+	    <!-- NOTE: due to id note below, remember to match the for-->
+	      <label for="sub-tab3-1">Sub-Tab 5</label>
+	      <label for="sub-tab3-2">Sub-Tab 6</label>
+	    </div>
+	    <!-- Sub Tab -->
+	    <input class="tab-radio" id="sub-tab3-1" name="sub-group3" type="radio" checked="checked">
+	    <div class="sub-tab-content">
+	      <h1>Sub-Tab 5</h1>
+	    </div>
+	    <!-- Sub Tab -->
+	    <input class="tab-radio" id="sub-tab3-2" name="sub-group3" type="radio">
+	    <div class="sub-tab-content">
+	      <h1>Sub-Tab 6</h1>
+	    </div>
+	  </div>
+
+	  <!-- Tab Container 4 -->
+	  <input class="tab-radio" id="main-tab-4" name="main-group" type="radio"/>
+	  <div class="tab-content">
+	    <div class="sub-tabs-container">
+	    <!-- NOTE: due to id note below, remember to match the for-->
+	      <label for="sub-tab4-1">Sub-Tab 7</label>
+	      <label for="sub-tab4-2">Sub-Tab 8</label>
+	    </div>
+	    <!-- Sub Tab -->
+	    <input class="tab-radio" id="sub-tab4-1" name="sub-group4" type="radio" checked="checked">
+	    <div class="sub-tab-content">
+	      <h1>Sub-Tab 7</h1>
+	    </div>
+	    <!-- Sub Tab -->
+	    <input class="tab-radio" id="sub-tab4-2" name="sub-group4" type="radio">
+	    <div class="sub-tab-content">
+	      <h1>Sub-Tab 8</h1>
+	    </div>
+	  </div>
+
+
+	</section>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</section>
 
 	<script src="/app.js"></script>
 

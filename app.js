@@ -1,4 +1,4 @@
-const baseURL = 'https://datastudio.google.com/embed/reporting/87c26c67-28ae-45c3-aaa4-f864248ebb4f/page/p_im617hlswc'
+const baseURL = 'https://datastudio.google.com/embed/reporting/87c26c67-28ae-45c3-aaa4-f864248ebb4f/page/'
 var my_departments = user_data('liste_departements')
 var myname =  user_data('nom')
 const SEPARATOR = ';'
@@ -22,13 +22,6 @@ function main(){
 	set_clicks()
 	init_spbs()
 	first_arrival_handler()
-
-	document.addEventListener('click', function(e){
-		if(e.target.innerText.length > 0) loading(true)
-		setTimeout(function(){
-			loading(false)
-		}, 800)
-	})
 
 	document.querySelector('.nav-links').addEventListener('click', hide_navbar_after_click_on_phone)
 }
@@ -127,6 +120,26 @@ function set_clicks(){
 	on_event('click','#you','account(false)')
 	on_event('click','#logout','logout()')
 	on_event('click','#keywords','loading_feature()')
+	on_event('click','.top-tabs-container','hide_back_menu(this)')
+}
+
+function hide_back_menu(ceci){
+	document.querySelector("#menu-check").checked = false;
+	setTimeout(set_current_menu, 10)
+}
+
+function set_current_menu(){
+
+	if(document.querySelector("#menu-check").checked === false){
+
+		const checked_element_id = $('[name="main-group"]:checked')[0].id
+		const next_label = $('label[for="'+checked_element_id+'"]').text()
+		
+		$('#user-menu').text(next_label)
+		//$('.sub-tab-content h1:visible').text(next_label)
+
+
+	}
 
 }
 
@@ -343,17 +356,26 @@ async function show_popup(with_animation,title,html,btn_name,with_cancel,fullscr
 
 function set_iframe(dptmts){
 	loading(true)
-	var view = document.getElementById('view')
 
-	var params = {}
+	const list_of_iframes_id = ['kpi','raw_datas']
+	const pages_id = ['p_zjlh8301wc', 'p_im617hlswc']
 
-	params['fresh_datas.departement1'] = dptmts.split(SEPARATOR)[0] || 'unknown'
-	params['fresh_datas.departement2'] = dptmts.split(SEPARATOR)[1] || 'unknown'
-	params['fresh_datas.departement3'] = dptmts.split(SEPARATOR)[2] || 'unknown'
+	var index_id = 0
+	for (const iframe_id of list_of_iframes_id) {
+		var view = document.getElementById(iframe_id)
+		var params = {}
+
+		params['fresh_datas.departement1'] = dptmts.split(SEPARATOR)[0] || 'unknown'
+		params['fresh_datas.departement2'] = dptmts.split(SEPARATOR)[1] || 'unknown'
+		params['fresh_datas.departement3'] = dptmts.split(SEPARATOR)[2] || 'unknown'
 
 
-	final_url = baseURL + '?params=' + encodeURIComponent(JSON.stringify(params))	 
-	if(view.src !== final_url) view.src = final_url
+		final_url = baseURL + pages_id[index_id] + '?params=' + encodeURIComponent(JSON.stringify(params))	 
+		console.log({final_url})
+		if(view.src !== final_url) view.src = final_url
+
+		index_id = index_id +1
+	}
 
 	//console.log({final_url})
 	return final_url

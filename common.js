@@ -220,6 +220,7 @@ function url_referrer_in_heads(){
 		//only if we're on supabase
 		if(args[0].includes(SUPABASE_URL)){
 
+			loading(true)
 
 			var headers_obj = new Headers();
 
@@ -280,6 +281,7 @@ function url_referrer_in_heads(){
 		;
 	    
 	  /* the original response can be resolved unmodified: */
+	  loading(false)
 	  return response;
 	};
 
