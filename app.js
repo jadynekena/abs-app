@@ -102,7 +102,7 @@ async function user_details_inputs(){
 
 async function account(firsttime){
 	title = (firsttime ? welcome() : 'Mon compte') 
-	content = '<p>'+(firsttime ? '👤 Commençons par votre identité.' : '👤 Vos informations') +'</p>' 
+	content = '<p>'+(firsttime ? '👤 Commençons par votre identité.' : '<i class="fa-duotone fa-user"></i>👤 Vos informations') +'</p>' 
 	content += await user_details_inputs()
 	next_steps = firsttime ? 'save_my_datas(false,"interests('+firsttime+')")' : save_and_run()
 	btn_name = firsttime ? 'Suivant' : 'Enregistrer'
@@ -136,8 +136,10 @@ function set_clicks(){
 	on_event('click','[for="sub-tab-2"]','assign_iframe_url("raw_datas")')
 }
 
-function toggle_light(){
+async function toggle_light(){
 	$('html').toggleClass('nuit')
+	mydatas = await save_my_datas(true)
+	console.log({mydatas})
 }
 
 function hide_back_menu(ceci){
@@ -297,7 +299,7 @@ async function get_id_niveau_to_save(){
 }
 
 function get_light(){
-	return $('html')[0].className ? 'nuit' : 'jour'
+	return $('html')[0].className === '' ? 'jour' : 'nuit'
 }
 
 async function save_my_datas(lets_show_all,callback){
@@ -305,6 +307,7 @@ async function save_my_datas(lets_show_all,callback){
 
 	myname = get_name_to_save()
 	my_departments = get_deptmts_to_save()
+	mymode = get_light()
 	nb_maj = get_nb_maj_to_save()
 	id_niveau = await get_id_niveau_to_save()
 
@@ -375,6 +378,8 @@ async function show_popup(with_animation,title,html,btn_name,with_cancel,fullscr
 		allowEscapeKey: with_cancel,
 		showCloseButton: with_cancel,
 		showCancelButton: with_cancel,
+		allowEnterKey: true,
+		focusConfirm: true
 	}).then(function(result_swal){
 		//console.log(result_swal)
 		if(result_swal['isConfirmed'] && next_steps) eval(next_steps)
