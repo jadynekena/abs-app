@@ -164,7 +164,7 @@ function set_current_menu(){
 }
 
 function loading_feature(){
-	return show_popup(true, 'Mes mots-clés', 'Fonctionnalité en cours de construction, merci de votre patience 🤞', 'Valider', false, false)
+	return show_popup(true, 'Mes mots-clés', 'Fonctionnalité en cours de construction, merci de votre patience <span class="ignore">🤞</span>', 'Valider', false, false)
 }
 
 function my_selection(){
