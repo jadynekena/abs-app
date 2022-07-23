@@ -114,7 +114,7 @@ async function user_details_inputs(){
 					<option value="">Choisissez votre niveau d'abonnement</option>
 					`+await sub_levels()+`
 				</select>
-				<input type="text" maxlength="25" value="`+user_data('nom')+`" name="nom" id="nom" placeholder="Nom"  autocomplete="off">
+				<input type="text" maxlength="15" value="`+user_data('nom')+`" name="nom" id="nom" placeholder="Nom"  autocomplete="off">
 			</div>`
 }
 
@@ -143,10 +143,10 @@ function set_clicks(){
 	on_event('click','#interests','interests(false)')
 
 	on_event('click','#account','account(false)')
+	on_event('click','#keywords','loading_feature(this.innerHTML)')
 	on_event('click','#you','account(false)')
 	on_event('click','#logout','logout()')
-	on_event('click','#keywords','loading_feature(this.innerHTML)')
-
+	on_event('click', '#download','download()')
 	on_event('click','.top-tabs-container','hide_back_menu(this)')
 	
 	//sub tabs
@@ -156,6 +156,17 @@ function set_clicks(){
 
 }
 
+async function download(){
+	if(await is_demo()){
+		//no download
+	}else{
+		//get datas remotely, on error : the user is not recognized or doesn't have any department
+	}
+}
+
+function no_download(){
+	show_popup(true,'Télécharger les données')
+}
 
 function apply_theme(){
 	if(user_data('mode') && user_data('mode') === 'nuit') {
@@ -423,8 +434,8 @@ async function show_popup(with_animation,title,html,btn_name,with_cancel,fullscr
 
 function set_iframe(dptmts,forcing){
 
-	console.log({dptmts})
-	console.log({forcing})
+	//console.log({dptmts})
+	//console.log({forcing})
 
 	const list_of_iframes_id = ['kpi','raw_datas']
 	const pages_id = ['p_zjlh8301wc', 'p_im617hlswc']
@@ -479,7 +490,7 @@ function assign_iframe_url(iframe_id,forcing){
 	final_url = curr_iframe.getAttribute('url')
 
 	if(curr_iframe.src !== final_url || curr_iframe.src === "" || forcing){
-		console.log({'assigning for':iframe_id})
+		//console.log({'assigning for':iframe_id})
 		curr_iframe.src = final_url	
 	} else{
 		//console.log('not assigning: ',final_url)

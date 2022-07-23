@@ -141,6 +141,7 @@ iframe{
   position: fixed;
   z-index: 999;
   display: flex;
+  max-height: 100px;
 }
 
 .nav > .nav-header {
@@ -225,6 +226,15 @@ iframe{
   .nav > #nav-check:checked ~ .nav-links {
     height: calc(100vh - 50px);
     overflow-y: auto;
+  }
+  /*
+  #download::before {
+    content: ''  !important;
+  }
+  */
+
+  #download {    
+    height: auto;
   }
 }
 
@@ -437,6 +447,11 @@ iframe{
   background-color: #a9f3ff;
 }
 
+.sub_tab_selected {
+  border-bottom: 5px solid #ffe1b5;
+}
+
+
 /* Tabs Content */
 .tab-content {
   margin-top: 10px;
@@ -446,4 +461,26 @@ iframe{
   margin-bottom: 20px;
 }
 
+#download {
+  background-color: #e17839;
+  border-radius: 8px; 
+  color: white;
+  padding: 10px;
+  font-weight: bold;
+  cursor: pointer;
+  /*
+  height: fit-content;
+  width: auto;
+  text-align: right;
+  display: block;
+  position: relative;
+  margin-top: 10px;
+  */
+}
 
+#download:hover {
+  text-decoration: 2px underline white;
+}
+#download::before {
+  content: 'Télécharger';
+}
