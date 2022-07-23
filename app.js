@@ -121,6 +121,10 @@ function set_clicks(){
 	on_event('click','#logout','logout()')
 	on_event('click','#keywords','loading_feature()')
 	on_event('click','.top-tabs-container','hide_back_menu(this)')
+	
+	//sub tabs
+	on_event('click','[for="sub-tab-1"]','assign_iframe_url("kpi")')
+	on_event('click','[for="sub-tab-2"]','assign_iframe_url("raw_datas")')
 }
 
 function hide_back_menu(ceci){
@@ -133,7 +137,8 @@ function set_current_menu(){
 	if(document.querySelector("#menu-check").checked === false){
 
 		const checked_element_id = $('[name="main-group"]:checked')[0].id
-		const next_label = $('label[for="'+checked_element_id+'"]').text()
+		const current_label = $('label[for="'+checked_element_id+'"]')
+		const next_label = current_label.text()
 		
 		$('#user-menu').text(next_label)
 		//$('.sub-tab-content h1:visible').text(next_label)
@@ -355,7 +360,6 @@ async function show_popup(with_animation,title,html,btn_name,with_cancel,fullscr
 }
 
 function set_iframe(dptmts){
-	loading(true)
 
 	const list_of_iframes_id = ['kpi','raw_datas']
 	const pages_id = ['p_zjlh8301wc', 'p_im617hlswc']
@@ -371,14 +375,33 @@ function set_iframe(dptmts){
 
 
 		final_url = baseURL + pages_id[index_id] + '?params=' + encodeURIComponent(JSON.stringify(params))	 
-		console.log({final_url})
-		if(view.src !== final_url) view.src = final_url
+		//console.log({final_url})
+		view.setAttribute('url',final_url)
 
 		index_id = index_id +1
 	}
 
+	//par defaut : chiffres clés
+	assign_iframe_url('kpi')
+
 	//console.log({final_url})
 	return final_url
+}
+
+function assign_iframe_url(iframe_id){
+	loading(true)
+
+	curr_iframe = document.getElementById(iframe_id)
+	final_url = curr_iframe.getAttribute('url')
+
+	if(curr_iframe.src !== final_url || curr_iframe.src === ""){
+		console.log({'assigning for':iframe_id})
+		curr_iframe.src = final_url	
+	} else{
+		loading(false)	
+	}
+
+	
 }
 
 function hide_navbar_after_click_on_phone(){

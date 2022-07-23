@@ -7,7 +7,7 @@
 	box-sizing: border-box;
 }
 *, *:hover {
-  transition: all 0.5s ease;
+    transition: all 0.3s ease-in;
 }
 
 .loading {
@@ -27,11 +27,9 @@ html, body {
     overflow-x: hidden;
 }
 body{
-	height:100vh;
 	margin:0;
 	padding:0;
 	text-align: center;
-	background: #ffeedb;
 }
 
 .iframe_wrapper {
@@ -44,7 +42,7 @@ body{
 iframe{
 	border: 0;
 	max-width: 800px;
-	border-radius: 20px;
+	/*border-radius: 20px;*/
 }
 
 .one_select {
@@ -153,7 +151,7 @@ iframe{
 }
 
 #nav-check {
-  display: none;
+  /*display: none;*/
 }
 
 @media (max-width:850px) {
@@ -184,7 +182,6 @@ iframe{
     width: 100%;
     background-color: #fffefef0;
     height: 0px;
-    transition: all 0.3s ease-in;
     overflow-y: hidden;
     top: 50px;
     left: 0px;
@@ -311,8 +308,8 @@ iframe{
 
 /* Main Tabs */
 .tab {
-  background-color: #ff885a;
-  color: #ffffff;
+  background-color: white;
+  color: black;
   display: inline-block;
   cursor: pointer;
   padding: 15px;
@@ -322,7 +319,7 @@ iframe{
 }
 
 .tab:hover {
-  background-color: #ffb496;
+  background-color: #f90;
 }
 
 /* TODO : Just to give indication that it's being clicked */
