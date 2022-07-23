@@ -146,13 +146,16 @@ iframe{
 
 .nav > .nav-header {
   display: inline;
-  margin-left: 30px;
-  width: inherit;
+  margin-left: 50px;
+  width: auto;
+  margin-top: 5px;
+  border-width: 0;
+  padding: 3px;
 }
 
 .nav > .nav-header > .nav-title {
-  display: inline-block;
-  font-size: 22px;
+  display: inline-flex;
+  font-size: calc(22px + 1vw);
   padding: 10px 10px 10px 10px;
 }
 
@@ -183,6 +186,9 @@ iframe{
 }
 
 @media (max-width:850px) {
+  .nav-title {
+    display: block !important;
+  }
   .nav > .nav-btn {
     display: inline-block;
     position: absolute;
@@ -468,14 +474,6 @@ iframe{
   padding: 10px;
   font-weight: bold;
   cursor: pointer;
-  /*
-  height: fit-content;
-  width: auto;
-  text-align: right;
-  display: block;
-  position: relative;
-  margin-top: 10px;
-  */
 }
 
 #download:hover {
