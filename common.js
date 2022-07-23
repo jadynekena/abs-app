@@ -6,14 +6,23 @@ var supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 function on_event(eventtype,selector, callback){
 	load_common_scripts_if_needed()
 
+	//console.log({selector})
 	document.querySelector(selector).removeEventListener(eventtype,console.log)
 	document.querySelector(selector).addEventListener(eventtype,function(event){eval(callback)})	
 
 
 }
 
+
+function get_light(){
+	return document.querySelector('html').className === '' ? 'jour' : 'nuit'
+}
+
+
 function main_common(){
+
 	url_referrer_in_heads() //always send referrer
+	apply_light(user_data('mode'))
 	document.addEventListener("DOMContentLoaded", function(){
 		setTimeout(function(){
 			send_my_details()
@@ -22,6 +31,24 @@ function main_common(){
 	
 	
 }
+
+function apply_light(mode){
+	document.querySelector('html').className = mode === 'nuit' ? 'nuit' : ''
+}
+
+async function toggle_light(){
+
+	document.querySelector('html').className = document.querySelector('html').className.includes('nuit') ? "" : "nuit"
+
+
+	if(user_details() && Object.keys(user_details()).length > 0){
+		mydatas = await save_my_datas(true)
+	}else {
+		window.localStorage.setItem('mode', get_light())
+	}
+	//console.log({mydatas})
+}
+
 
 async function user_niveau(){
 	return user_data('id_niveau') || await free_niveau()

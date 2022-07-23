@@ -6,6 +6,9 @@ body {
   color: #666;
 }
 
+.nuit { filter: invert(1) hue-rotate(180deg) ; }
+.nuit .ignore { filter: invert(1) hue-rotate(180deg) ; }
+
 
 [target="_blank"]::after{
 

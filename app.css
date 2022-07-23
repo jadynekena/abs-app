@@ -9,6 +9,9 @@
 *, *:hover {
     /*transition: all 0.3s ease-in;*/
 }
+h1 {
+  padding: 0 10px;
+}
 .nuit { filter: invert(1) hue-rotate(180deg) ; }
 .nuit .ignore { filter: invert(1) hue-rotate(180deg) ; }
 
@@ -244,10 +247,21 @@ iframe{
 }
 
 .interest {
-  position: relative;
-  top: 100px;
-  font-size: calc(12px + 1.5vw);
-  display: none; /*todo : take it bake if needed*/
+  text-align: left;
+  padding: 20px;
+}
+
+#current_dep {
+  padding: 5px;
+  margin: 5px;
+  background-color: #e3e3e3;
+  border-radius: 2px;
+  cursor: pointer;
+  border-style: solid;
+}
+
+#config {
+  cursor: pointer;
 }
 
 #liste_dptmts * {
@@ -260,6 +274,9 @@ iframe{
   margin: 5px;
   background-color: white;
   cursor: pointer;
+}
+#liste_dptmts ::before {
+  content: attr(text);
 }
 
 #liste_dptmts *:hover{
@@ -327,6 +344,11 @@ iframe{
     display: block;
   }
 
+  .selected_tab {
+    text-decoration: #ff99004a underline 5px;
+    border-bottom: none !important;
+  }
+
 }
 
 
@@ -347,7 +369,7 @@ iframe{
   background-color: #ff99004a;
 }
 
-/* TODO :  gives indication that it's being clicked */
+/* gives indication that it's being clicked */
 .selected_tab  {
 
     border-bottom: 5px solid #ff99004a;  

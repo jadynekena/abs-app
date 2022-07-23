@@ -66,7 +66,9 @@ function handle_access_token(){
 		set_alert('ERREUR : Le lien que vous avez utilisé a expiré.','red')
 	
 	}else {
+		var mode = localStorage.getItem('mode');
 		window.localStorage.clear()
+		window.localStorage.setItem('mode',mode);
 	}
 	
 }

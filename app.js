@@ -3,6 +3,7 @@ var my_departments = user_data('liste_departements')
 var myname =  user_data('nom')
 var mymode = user_data('mode')
 const SEPARATOR = ';'
+var selected_departement = ''
 
 
 async function init_spbs(){
@@ -60,9 +61,26 @@ async function show_my_departments(){
 	const supabase_local = createClient(SUPABASE_URL, SUPABASE_KEY);
 	res = await supabase_local.rpc('dep_from_uid',{mylist: my_departments})
 	if(res.data){
-		document.querySelector('#titleinterest').innerHTML = "Vos départements d'intérêt"
-		document.querySelector('#liste_dptmts').innerHTML = res.data.split(SEPARATOR).map(e => '<span onclick="interests(false)">'+e+'</span>').join('')
+		const all_chosen_dept = res.data.split(SEPARATOR)
+		const new_dep = '<option value="" selected>Tous</option>' + all_chosen_dept.map(e => '<option value="'+e+'">'+e+'</option>')
+
+		$('#current_dep').html(new_dep)
 	}
+}
+
+async function filter_departements(ceci){
+
+	const current_dep  = ceci.value
+
+	selected_departement = await get_those_deptmts([current_dep])  //search ID of the department remotely
+	selected_departement = selected_departement['id_departement'] || ''
+
+	//update my_departments locally
+	my_departments = current_dep
+	$('#current_dep').text(current_dep)
+
+	console.log({my_departments})
+	eval(save_and_run(true))
 }
 
 function update_username_locally(){
@@ -123,24 +141,21 @@ function show_all(yes){
 
 function set_clicks(){
 	on_event('click','#interests','interests(false)')
+
 	on_event('click','#account','account(false)')
 	on_event('click','#you','account(false)')
 	on_event('click','#logout','logout()')
 	on_event('click','#keywords','loading_feature()')
-	on_event('click','#light','toggle_light()')
 
 	on_event('click','.top-tabs-container','hide_back_menu(this)')
 	
 	//sub tabs
 	on_event('click','[for="sub-tab-1"]','assign_iframe_url("kpi")')
 	on_event('click','[for="sub-tab-2"]','assign_iframe_url("raw_datas")')
+
+
 }
 
-async function toggle_light(){
-	$('html').toggleClass('nuit')
-	mydatas = await save_my_datas(true)
-	//console.log({mydatas})
-}
 
 function apply_theme(){
 	if(user_data('mode') && user_data('mode') === 'nuit') {
@@ -188,6 +203,16 @@ function value_selected(index_of_deptmt){
 	return my_departments ? my_departments.split(SEPARATOR)[index_of_deptmt] : ""
 }
 
+async function get_those_deptmts(deptmts_array){
+	const supabase_local = createClient(SUPABASE_URL, SUPABASE_KEY);
+	const {data, error} = await supabase_local.from('liste_tout_departements').select('*').in('Departement',deptmts_array)
+
+	var res = ""
+	if(data && data[0]) res = data[0] 
+
+	return res
+}
+
 async function choice_departments(){
 	const supabase_local = createClient(SUPABASE_URL, SUPABASE_KEY);
 	const {data, error} = await supabase_local.from('liste_tout_departements').select('*')
@@ -228,7 +253,7 @@ async function all_credits(){
 }
 
 async function disclaimer_credits(firsttime){
-	var res = await all_credits()
+	var res = await all_credits() //todo: optimize
 	var remain = res['remain_credits']
 	var max = res['max_credits']
 	var used = res['used_credits']
@@ -246,7 +271,8 @@ async function disclaimer_credits(firsttime){
 			) +'</p>'
 }
 
-function save_and_run(){
+function save_and_run(dontsend_local_changes){
+	if(dontsend_local_changes) return 'save_my_datas(true,"iframe_setup()",true)' 
 	return  'save_my_datas(true,"iframe_setup()")' 
 }
 
@@ -293,7 +319,8 @@ function get_name_to_save(){
 }
 
 function get_deptmts_to_save(){
-	return my_selection() || user_data('liste_departements')
+	console.log({selected_departement})
+	return my_selection() || selected_departement || user_data('liste_departements')
 }
 
 function get_nb_maj_to_save(){
@@ -304,12 +331,8 @@ async function get_id_niveau_to_save(){
 	return $('#niveau').val() || user_niveau()
 }
 
-function get_light(){
-	return $('html')[0].className === '' ? 'jour' : 'nuit'
-}
-
-async function save_my_datas(lets_show_all,callback){
-	//console.log({callback})
+async function save_my_datas(lets_show_all,callback, dontsend_local_changes){
+	console.log({dontsend_local_changes})
 
 	myname = get_name_to_save()
 	my_departments = get_deptmts_to_save()
@@ -323,6 +346,8 @@ async function save_my_datas(lets_show_all,callback){
 		mode: mymode,
 		id_niveau: id_niveau
 	} 
+
+	if(dontsend_local_changes) delete my_datas['liste_departements']
 
 	show_all(lets_show_all)
 
@@ -338,6 +363,7 @@ async function save_my_datas(lets_show_all,callback){
 		//console.log({myname})
 		window.localStorage.setItem('nom',myname)
 		window.localStorage.setItem('liste_departements',my_departments)
+		window.localStorage.setItem('mode',mymode)
 
 		
 	}
@@ -348,7 +374,9 @@ async function save_my_datas(lets_show_all,callback){
 	
 	hist = await send_my_details(true)
 	//console.log({hist})
-	update_html_view()
+	
+	if(!dontsend_local_changes) update_html_view()
+	
 	return my_datas
 
 }
@@ -394,6 +422,9 @@ async function show_popup(with_animation,title,html,btn_name,with_cancel,fullscr
 }
 
 function set_iframe(dptmts,forcing){
+
+	console.log({dptmts})
+	console.log({forcing})
 
 	const list_of_iframes_id = ['kpi','raw_datas']
 	const pages_id = ['p_zjlh8301wc', 'p_im617hlswc']
