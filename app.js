@@ -119,8 +119,8 @@ async function user_details_inputs(){
 }
 
 async function account(firsttime){
-	title = (firsttime ? welcome() : 'Mon compte') 
-	content = '<p>'+(firsttime ? '👤 Commençons par votre identité.' : '<i class="fa-duotone fa-user"></i>👤 Vos informations') +'</p>' 
+	title = (firsttime ? welcome() : $('#account').html()) 
+	content = '<p>'+(firsttime ? '👤 Commençons par votre identité.' : '<i class="fa-duotone fa-user"></i>Vos informations') +'</p>' 
 	content += await user_details_inputs()
 	next_steps = firsttime ? 'save_my_datas(false,"interests('+firsttime+')")' : save_and_run()
 	btn_name = firsttime ? 'Suivant' : 'Enregistrer'
@@ -145,7 +145,7 @@ function set_clicks(){
 	on_event('click','#account','account(false)')
 	on_event('click','#you','account(false)')
 	on_event('click','#logout','logout()')
-	on_event('click','#keywords','loading_feature()')
+	on_event('click','#keywords','loading_feature(this.innerHTML)')
 
 	on_event('click','.top-tabs-container','hide_back_menu(this)')
 	
@@ -186,8 +186,8 @@ function set_current_menu(){
 
 }
 
-function loading_feature(){
-	return show_popup(true, 'Mes mots-clés', 'Fonctionnalité en cours de construction, merci de votre patience <span class="ignore">🤞</span>', 'Valider', false, false)
+function loading_feature(title){
+	return show_popup(true, title, 'Fonctionnalité en cours de construction, merci de votre patience <span class="ignore">🤞</span>', 'Valider', false, false)
 }
 
 function my_selection(){
@@ -277,7 +277,7 @@ function save_and_run(dontsend_local_changes){
 }
 
 async function interests(firsttime){
-	title = (firsttime ? welcome() : 'Mes intérêts') 
+	title = (firsttime ? welcome() : $('#interests').html()) 
 	all_deptmts = await  choice_departments()
 	disclaimer = await disclaimer_credits(firsttime)
 	content = '<p>'+(firsttime ? 'Pour commencer, c' : 'C')+'hoisissez vos 3 départements d\'intérêt.</p>' + all_deptmts + disclaimer 
