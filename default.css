@@ -6,7 +6,14 @@ a {
   padding: 10px;
   background-color: #f4f4f4;
   border-radius: 5px;
+  display: block;
+  width: fit-content;
 }
+
+p {
+  text-align: justify;
+}
+
 .all {
 	margin: auto;
 	margin-top: 50px;
