@@ -372,12 +372,20 @@ iframe{
   background-color: #cddc39;
 }
 
+.sub-tabs-container label:nth-child(2) {
+  background-color: #00dbff;
+}
+
 .sub-tabs-container label:hover {
   background-color: #ffccbc;
 }
 
 .sub-tabs-container label:first-child:hover {
   background-color: #e6ee9c;
+}
+
+.sub-tabs-container label:nth-child(2):hover {
+  background-color: #a9f3ff;
 }
 
 /* Tabs Content */
