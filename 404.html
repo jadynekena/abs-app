@@ -3,7 +3,7 @@
 <head>
 	<title>Amazon Best Sellers</title>
 	<meta charset="UTF-8" name="viewport" content="width=device-width, initial-scale=1">
-	<link rel="shortcut icon" href="logo.png" type="image/x-icon">
+	<link rel="shortcut icon" href="/logo.png" type="image/x-icon">
 	<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
 	<link rel="stylesheet" href="/app.css">
 	<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -13,7 +13,7 @@
 	<img class="loading" src="/loading.gif" style="width: 50px; display: none;">
 
 	<div class="nav">
-		<a href="."><img class="logo" src="logo.png"></a>
+		<a href="."><img class="logo" src="/logo.png"></a>
 		<input type="checkbox" id="nav-check">
 
 		<div class="nav-header">
@@ -51,9 +51,9 @@
 			<label id="user-menu" for="menu-check">Chiffres clés et données brutes du jour</label>
 			<div class="top-tabs-container">
 				<label class="tab selected_tab" for="main-tab-1">Chiffres clés et données brutes du jour</label>			
-				<label class="tab" for="main-tab-2">Zoom sur les départements</label>
-				<label class="tab" for="main-tab-3">Zoom sur les produits</label>
-				<label class="tab" for="main-tab-4">Questions - Réponses</label>
+				<label class="tab hidden" for="main-tab-2">Zoom sur les départements</label>
+				<label class="tab hidden" for="main-tab-3">Zoom sur les produits</label>
+				<label class="tab hidden" for="main-tab-4">Questions - Réponses</label>
 			</div>
 		</div>
 

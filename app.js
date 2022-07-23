@@ -336,7 +336,7 @@ function iframe_setup(){
 }
 
 function logo(){
-	return `<img src="final-logo.png" alt="Amazon Best Sellers" style="width: 10vh;display: block;min-width: 125px;">`
+	return `<img src="/final-logo.png" alt="Amazon Best Sellers" style="width: 10vh;display: block;min-width: 125px;">`
 }
 
 async function show_popup(with_animation,title,html,btn_name,with_cancel,fullscreen,next_steps){

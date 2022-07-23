@@ -96,8 +96,8 @@ async function get_content(url,sync_mode){
 
 
 function loading(yes){
-	if(document.querySelector('.loading'))document.querySelector('.loading').style.display = yes ? 'block' : 'none'
-	document.body.style.cursor = yes ? 'progress' : ''
+	if(document.querySelector('.loading')) document.querySelector('.loading').style.display = yes ? 'block' : 'none'
+	document.querySelector('html').style.cursor = yes ? 'progress' : ''
 }
 
 
