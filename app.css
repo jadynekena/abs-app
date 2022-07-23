@@ -171,12 +171,12 @@ iframe{
   text-align: right;
 }
 
-.nav > .nav-links > a {
+.nav > .nav-links > * {
   display: inline-block;
-  padding: 13px 10px 13px 10px;
+  padding: 20px;
 }
 
-.nav > .nav-links > a:hover {
+.nav > .nav-links > *:hover {
   background-color: rgb(242, 242, 242);
   font-weight: bold;
 }
@@ -222,7 +222,7 @@ iframe{
     left: 0px;
     text-align: center;
   }
-  .nav > .nav-links > a {
+  .nav > .nav-links > * {
     display: block;
     width: 100%;
   }
