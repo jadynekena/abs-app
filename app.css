@@ -9,6 +9,14 @@
 *, *:hover {
     transition: all 0.3s ease-in;
 }
+.nuit { filter: invert(1) hue-rotate(180deg) ; }
+.nuit .ignore { filter: invert(1) hue-rotate(180deg) ; }
+
+.local-logo {
+  width: 10vh;
+  display: block;
+  min-width: 125px;
+}
 
 .loading {
   position: fixed;
@@ -201,6 +209,7 @@ iframe{
     overflow-y: hidden;
     top: 50px;
     left: 0px;
+    text-align: center;
   }
   .nav > .nav-links > a {
     display: block;

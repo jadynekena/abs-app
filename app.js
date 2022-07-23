@@ -1,6 +1,7 @@
 const baseURL = 'https://datastudio.google.com/embed/reporting/87c26c67-28ae-45c3-aaa4-f864248ebb4f/page/'
 var my_departments = user_data('liste_departements')
 var myname =  user_data('nom')
+var mymode = user_data('mode')
 const SEPARATOR = ';'
 
 
@@ -126,11 +127,17 @@ function set_clicks(){
 	on_event('click','#you','account(false)')
 	on_event('click','#logout','logout()')
 	on_event('click','#keywords','loading_feature()')
+	on_event('click','#light','toggle_light()')
+
 	on_event('click','.top-tabs-container','hide_back_menu(this)')
 	
 	//sub tabs
 	on_event('click','[for="sub-tab-1"]','assign_iframe_url("kpi")')
 	on_event('click','[for="sub-tab-2"]','assign_iframe_url("raw_datas")')
+}
+
+function toggle_light(){
+	$('html').toggleClass('nuit')
 }
 
 function hide_back_menu(ceci){
@@ -184,8 +191,12 @@ async function choice_departments(){
 		  + '</div>'
 }
 
+function hand_shake(){
+	return '<span class="ignore">👋</span>'
+}
+
 function welcome(){
-	return 'Bienvenue sur Amazon Best Sellers 👋'
+	return 'Bienvenue sur Amazon Best Sellers ' + hand_shake()
 }
 
 async function number_of_available_edits(){
@@ -285,6 +296,10 @@ async function get_id_niveau_to_save(){
 	return $('#niveau').val() || user_niveau()
 }
 
+function get_light(){
+	return $('html')[0].className ? 'nuit' : 'jour'
+}
+
 async function save_my_datas(lets_show_all,callback){
 	//console.log({callback})
 
@@ -296,7 +311,7 @@ async function save_my_datas(lets_show_all,callback){
 	my_datas = {
 		nom: myname,
 		liste_departements: my_departments,
-		nb_maj: nb_maj,
+		mode: mymode,
 		id_niveau: id_niveau
 	} 
 
@@ -336,7 +351,7 @@ function iframe_setup(){
 }
 
 function logo(){
-	return `<img src="/final-logo.png" alt="Amazon Best Sellers" style="width: 10vh;display: block;min-width: 125px;">`
+	return `<img src="/final-logo.png" alt="Amazon Best Sellers" class="local-logo">`
 }
 
 async function show_popup(with_animation,title,html,btn_name,with_cancel,fullscreen,next_steps){
@@ -389,11 +404,19 @@ function set_iframe(dptmts,forcing){
 		index_id = index_id +1
 	}
 
-	//par defaut : ce qui est visible
-	const visible_iframe_id = document.querySelector('iframe:not(hidden)').id
-	assign_iframe_url(visible_iframe_id,forcing)
+	setTimeout(function(){
+
+		const visible_iframe_id = current_visible_iframe_id()
+		assign_iframe_url(visible_iframe_id,forcing)
+
+	}, 10)
 
 	return true
+}
+
+function current_visible_iframe_id(){
+
+	return $('iframe:visible')[0].id
 }
 
 function assign_iframe_url(iframe_id,forcing){
@@ -406,6 +429,7 @@ function assign_iframe_url(iframe_id,forcing){
 		console.log({'assigning for':iframe_id})
 		curr_iframe.src = final_url	
 	} else{
+		//console.log('not assigning: ',final_url)
 		loading(false)	
 	}
 
