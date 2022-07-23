@@ -33,11 +33,10 @@ body{
 }
 
 .iframe_wrapper {
-	height: 5400px;
+	height: 9000px;
 	min-width: 400px;
 	max-width: 100vw;
-	/*position: relative;*/
-	/*top: 150px;*/
+  padding: 0 3vw;
 }
 iframe{
 	border: 0;
@@ -107,13 +106,23 @@ iframe{
   overflow: hidden;
 }
 
+#you {
+  background: antiquewhite;
+  padding: 5px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+#you:hover {
+  background-color: #ffc075; 
+}
+
 .nav {
   height: 50px;
   width: 100%;
   background-color: #fffefef0;
   position: fixed;
   z-index: 999;
-  overflow: hidden;
 }
 
 .nav > .nav-header {
@@ -121,13 +130,10 @@ iframe{
   margin-left: 30px;
 }
 
-.nav-title {
+.nav > .nav-header > .nav-title {
   display: inline-block;
   font-size: 22px;
   padding: 10px 10px 10px 10px;
-    padding-right: 10px;
-  margin: 0 30px;
-  padding-right: 50px;
 }
 
 .nav > .nav-btn {
@@ -150,8 +156,8 @@ iframe{
   font-weight: bold;
 }
 
-#nav-check {
-  /*display: none;*/
+.nav > #nav-check {
+  display: none;
 }
 
 @media (max-width:850px) {
@@ -180,8 +186,9 @@ iframe{
     position: absolute;
     display: block;
     width: 100%;
-    background-color: #fffefef0;
+    background-color: inherit;
     height: 0px;
+    transition: all 0.3s ease-in;
     overflow-y: hidden;
     top: 50px;
     left: 0px;
@@ -319,13 +326,13 @@ iframe{
 }
 
 .tab:hover {
-  background-color: #f90;
+  background-color: #ff99004a;
 }
 
-/* TODO : Just to give indication that it's being clicked */
-.selected  {
+/* TODO :  gives indication that it's being clicked */
+.selected_tab  {
 
-    border-bottom: 5px solid #ffb496;  
+    border-bottom: 5px solid #ff99004a;  
   
 }
 

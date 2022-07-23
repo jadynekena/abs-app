@@ -95,7 +95,7 @@ async function user_details_inputs(){
 					<option value="">Choisissez votre niveau d'abonnement</option>
 					`+await sub_levels()+`
 				</select>
-				<input type="text" value="`+user_data('nom')+`" name="nom" id="nom" placeholder="Nom"  autocomplete="off">
+				<input type="text" maxlength="25" value="`+user_data('nom')+`" name="nom" id="nom" placeholder="Nom"  autocomplete="off">
 			</div>`
 }
 
@@ -107,8 +107,14 @@ async function account(firsttime){
 	btn_name = firsttime ? 'Suivant' : 'Enregistrer'
 	show_popup(true,title,content,btn_name,!firsttime,firsttime,next_steps)
 
-	$('#niveau')[0].value = user_data('id_niveau')
+	$('#niveau')[0].value = user_data('id_niveau')	
+	on_event('input','#nom','disable_space(event)')
 }
+
+function disable_space(event){
+    if(event.which === 32) return false;
+}
+
 
 function show_all(yes){
 	Array.from( document.querySelectorAll('.nav, .iframe_wrapper') ).forEach(e => e.style.display = yes ? '' : 'none' )
@@ -140,7 +146,9 @@ function set_current_menu(){
 		const current_label = $('label[for="'+checked_element_id+'"]')
 		const next_label = current_label.text()
 		
-		$('#user-menu').text(next_label)
+		$('label').removeClass('selected_tab')
+		$(current_label).addClass('selected_tab')
+		$('#user-menu').html(next_label)
 		//$('.sub-tab-content h1:visible').text(next_label)
 
 
@@ -324,7 +332,7 @@ async function save_my_datas(lets_show_all,callback){
 function iframe_setup(){
 	my_departments = user_data('liste_departements');
 	myname = user_data('nom');
-	set_iframe(my_departments)
+	set_iframe(my_departments,true)
 }
 
 function logo(){
@@ -359,7 +367,7 @@ async function show_popup(with_animation,title,html,btn_name,with_cancel,fullscr
 	})
 }
 
-function set_iframe(dptmts){
+function set_iframe(dptmts,forcing){
 
 	const list_of_iframes_id = ['kpi','raw_datas']
 	const pages_id = ['p_zjlh8301wc', 'p_im617hlswc']
@@ -381,20 +389,20 @@ function set_iframe(dptmts){
 		index_id = index_id +1
 	}
 
-	//par defaut : chiffres clés
-	assign_iframe_url('kpi')
+	//par defaut : ce qui est visible
+	const visible_iframe_id = document.querySelector('iframe:not(hidden)').id
+	assign_iframe_url(visible_iframe_id,forcing)
 
-	//console.log({final_url})
-	return final_url
+	return true
 }
 
-function assign_iframe_url(iframe_id){
+function assign_iframe_url(iframe_id,forcing){
 	loading(true)
 
 	curr_iframe = document.getElementById(iframe_id)
 	final_url = curr_iframe.getAttribute('url')
 
-	if(curr_iframe.src !== final_url || curr_iframe.src === ""){
+	if(curr_iframe.src !== final_url || curr_iframe.src === "" || forcing){
 		console.log({'assigning for':iframe_id})
 		curr_iframe.src = final_url	
 	} else{
