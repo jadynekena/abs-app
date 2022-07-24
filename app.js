@@ -149,7 +149,7 @@ async function set_clicks(){
 
 	if(await is_demo()){
 		const timedout = await is_timedout()
-		console.log({timedout})
+		//console.log({timedout})
 		if(timedout){
 			on_event('click','body','timeout_demo(event,"Fermer,💡, 📴 Déconnexion")')	
 		} else{
