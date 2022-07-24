@@ -48,7 +48,7 @@ function handle_embed(){
 		} 
 		
 		//if mobile : add margin top
-		if(isMobileDevice()) $('body').css('margin-top', '56px')
+		//if(isMobileDevice()) $('body').css('margin-top', '56px')
 	}
 
 
