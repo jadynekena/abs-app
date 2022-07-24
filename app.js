@@ -180,7 +180,7 @@ function random_code(length){
 
 async function ask_del_acc(){
 	code = random_code(5)
-	if(prompt('Pour supprimer votre compte définitevement, merci de saisir le code suivant : '+code,'') === code){
+	if(prompt('Pour supprimer votre compte définitivement, merci de saisir le code suivant : '+code,'') === code){
 		await supabase.rpc('delete_user')
 		alert('✅ Votre compte a bien été supprimé.\nVos données sont conservées pendant 15 jours, puis seront aussi supprimées.\n Vous allez maintenant être déconnecté.')
 		logout()
