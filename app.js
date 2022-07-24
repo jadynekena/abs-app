@@ -258,7 +258,7 @@ async function download(){
 
 	}else{
 		const date_consultation = all.data.split('\n')[1].substring(1,11);
-		download_locally(all.data, date_consultation + '_' + user_data('nom') + '_' + my_departments.replaceAll(SEPARATOR,'-'))
+		download_locally(all.data, date_consultation + '_' + user_data('nom') + '_AMAZONBESTSELLERS')
 
 		my_details['taille_telechargement'] =  size_of_variable(all.data)
 
