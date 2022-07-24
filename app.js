@@ -157,10 +157,30 @@ function set_clicks(){
 }
 
 async function download(){
-	if(await is_demo()){
-		//no download
+
+	const supabase_local = createClient(SUPABASE_URL, SUPABASE_KEY)
+
+	//say that we downloaded
+	var id_download = await supabase_local.from('telechargements').insert(await download_details())
+	//console.log({id_download})
+
+	if(id_download &&  id_download.data && id_download.data[0] && id_download.data[0]['id']	){
+		id_download = id_download.data[0]['id']	
+	} else{
+		id_download = who_is_connected() //random uuid
+	}
+
+	const all = await my_amazon_datas(supabase_local)
+	if(all.error){
+		show_popup(true,'❌ Erreur',all.error.message,'Fermer',false,false)
 	}else{
-		//get datas remotely, on error : the user is not recognized or doesn't have any department
+		const date_consultation = all.data.split('\n')[1].substring(1,11);
+		download_locally(all.data, date_consultation + '_' + user_data('nom') + '_' + my_departments.replaceAll(SEPARATOR,'-'))
+
+		await supabase.from('telechargements').update({
+			taille_telechargement: size_of_variable(all.data)
+		}).match({id: id_download})
+
 	}
 }
 
@@ -330,7 +350,7 @@ function get_name_to_save(){
 }
 
 function get_deptmts_to_save(){
-	console.log({selected_departement})
+	//console.log({selected_departement})
 	return my_selection() || selected_departement || user_data('liste_departements')
 }
 
@@ -343,7 +363,7 @@ async function get_id_niveau_to_save(){
 }
 
 async function save_my_datas(lets_show_all,callback, dontsend_local_changes){
-	console.log({dontsend_local_changes})
+	//console.log({dontsend_local_changes})
 
 	myname = get_name_to_save()
 	my_departments = get_deptmts_to_save()

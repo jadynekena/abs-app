@@ -142,7 +142,7 @@ iframe{
   position: fixed;
   z-index: 999;
   display: flex;
-  max-height: 100px;
+  max-height: 125px;
 }
 
 .nav > .nav-header {
@@ -248,7 +248,7 @@ iframe{
 }
 
 .whole-body {
-  margin-top: 100px;
+  margin-top: 125px;
 }
 
 
@@ -344,7 +344,7 @@ iframe{
 @media (max-width:850px) {
   
   .whole-body {
-    /*margin-top: calc(50px + 10vw);*/
+
   }
 
   .top-tabs-wrap > label {
@@ -375,7 +375,7 @@ iframe{
 
 /* Main Tabs */
 .tab {
-  background-color: white;
+  background-color: inherit;
   color: black;
   display: inline-block;
   cursor: pointer;
@@ -484,4 +484,8 @@ iframe{
 }
 #download::before {
   content: 'Télécharger';
+}
+
+#welcomer {
+  padding: 5px 10px;
 }

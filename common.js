@@ -332,3 +332,60 @@ function inIframe() {
         return true;
     }
 }
+
+async function my_amazon_datas(supabase){
+	const res = await supabase.rpc('dernieres_donnees_cet_user',{id_user: await who_is_connected()}).csv()
+	return res;
+}
+
+async function download_details(){
+	return {
+		requete_telechargement: 'dernieres_donnees_cet_user',
+		id_user: await who_is_connected()
+	}
+}
+
+function download_locally(csv,final_name){
+	var downloadLink = document.createElement("a");
+	var blob = new Blob(["\ufeff", csv]);
+	var url = URL.createObjectURL(blob);
+	downloadLink.href = url;
+	downloadLink.download = final_name + ".csv";
+	downloadLink.click()
+	downloadLink.remove()
+
+}
+
+function size_of_variable( object ) {
+
+    var objectList = [];
+    var stack = [ object ];
+    var bytes = 0;
+
+    while ( stack.length ) {
+        var value = stack.pop();
+
+        if ( typeof value === 'boolean' ) {
+            bytes += 4;
+        }
+        else if ( typeof value === 'string' ) {
+            bytes += value.length * 2;
+        }
+        else if ( typeof value === 'number' ) {
+            bytes += 8;
+        }
+        else if
+        (
+            typeof value === 'object'
+            && objectList.indexOf( value ) === -1
+        )
+        {
+            objectList.push( value );
+
+            for( var i in value ) {
+                stack.push( value[ i ] );
+            }
+        }
+    }
+    return bytes;
+}
