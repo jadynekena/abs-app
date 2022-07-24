@@ -83,14 +83,14 @@
 	    <input class="tab-radio" id="sub-tab-1" name="sub-group" type="radio" checked="checked">
 	    <div class="sub-tab-content">
 	      	<div class="iframe_wrapper">
-				<iframe src="" id="kpi" width="100%" height="100%" frameborder="0" style="border:0" allowfullscreen="" onload="parent.loading(false)"></iframe>
+				<iframe src="" id="kpi" width="100%" height="100%" frameborder="0" style="border:0" allowfullscreen="" onload="if(document.querySelector('.loading')){ document.querySelector('.loading').style.display = 'none'}document.querySelector('html').style.cursor =  ''"></iframe>
 			</div>
 	    </div>
 	    <!-- Données brutes -->
 	    <input class="tab-radio" id="sub-tab-2" name="sub-group" type="radio">
 	    <div class="sub-tab-content">
 	      	<div class="iframe_wrapper">
-				<iframe src="" id="raw_datas" width="100%" height="100%" frameborder="0" style="border:0" allowfullscreen="" onload="parent.loading(false)"></iframe>
+				<iframe src="" id="raw_datas" width="100%" height="100%" frameborder="0" style="border:0" allowfullscreen="" onload="if(document.querySelector('.loading')){ document.querySelector('.loading').style.display = 'none'}document.querySelector('html').style.cursor =  ''"></iframe>
 			</div>
 	    </div>
 	  </div>

@@ -21,6 +21,7 @@ function exactly_three_dptmts(list_with_commas){
 function main(){
 	
 	apply_theme()
+	handle_embed()
 	show_logo()
 	set_clicks()
 	init_spbs()
@@ -37,6 +38,11 @@ function show_logo(){
 		document.querySelector('.logo').parentNode.href =  window.location.pathname
 	}
 
+}
+function handle_embed(){
+	if(inIframe() && !is_demo()){
+		if (confirm('Déconnecter votre compte pour être en mode démo ?')) logout(true)	
+	} 
 }
 
 function first_arrival_handler(){
@@ -124,12 +130,50 @@ async function account(firsttime){
 	title = (firsttime ? welcome() : $('#account').html()) 
 	content = '<p>'+(firsttime ? '<span class="ignore">👤</span> Commençons par votre identité.' : '<i class="fa-duotone fa-user"></i>Vos informations') +'</p>' 
 	content += await user_details_inputs()
+	content += delete_acc()
 	next_steps = firsttime ? 'save_my_datas(false,"interests('+firsttime+')")' : save_and_run()
 	btn_name = firsttime ? 'Suivant' : 'Enregistrer'
 	show_popup(true,title,content,btn_name,!firsttime,firsttime,next_steps)
 
 	$('#niveau')[0].value = user_niveau()
 	on_event('input','#nom','disable_space(event)')
+
+}
+
+function delete_acc(){
+	if(!is_demo()) return `
+	<div style="margin-top: 20px;">
+	   <details class="urgent" style="padding: 10px;border-radius: 10px;background: #ff000036;cursor: pointer;"><summary>ZONE DE DANGER</summary>
+	  <span class="action" onclick="ask_del_acc()">Supprimer mon compte</span>
+	     
+	  </details>
+	  
+	    
+	</div>
+	`
+
+	return ''
+}
+function random_code(length){
+	var result = '';
+    var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    var charactersLength = characters.length;
+    for ( var i = 0; i < length; i++ ) {
+      result += characters.charAt(Math.floor(Math.random() * charactersLength));
+	}
+
+   return result;
+}
+
+async function ask_del_acc(){
+	code = random_code(5)
+	if(prompt('Pour supprimer votre compte définitevement, merci de saisir le code suivant : '+code,'') === code){
+		await supabase.rpc('delete_user')
+		alert('✅ Votre compte a bien été supprimé.\nVos données sont conservées pendant 15 jours, puis seront aussi supprimées.\n Vous allez maintenant être déconnecté.')
+		logout()
+	}else{
+		alert('❌ Vous n\'avez pas saisi le bon code.')
+	}
 }
 
 function disable_space(event){
@@ -348,7 +392,7 @@ function disclaimer_credits(firsttime,used,max,remain){
 			<p>Vous avez utilisé <a><strong>`+used+`</strong>/<strong>`+max+`</strong></a> de vos crédits.</p>
 			`)
 		
-			+ (used >= max ? call_to_level_up('Vous devez changer votre niveau abonnement pour modifier.','Passer au niveau supérieur', window.location.pathname,'set_user_pricing()') : '') 
+			+ (used >= max ? call_to_level_up('Vous devez changer votre niveau abonnement pour modifier.','Passer au niveau supérieur', window.location.pathname,'account()') : '') 
 			
 
 

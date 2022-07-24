@@ -53,11 +53,6 @@ async function toggle_light(){
 	//console.log({mydatas})
 }
 
-
-async function user_niveau(){
-	return user_data('id_niveau') || await free_niveau()
-}
-
 async function send_my_details(forcing){
 	my_details = await get_my_details()
 	if(forcing || (window.location.pathname !== '/' && !currently_local_host() && all_keys_have_value(my_details))){
@@ -150,8 +145,7 @@ async function call_function(function_name, parameters, JSONMODE){
 
 
 function loading(yes){
-	if(document.querySelector('.loading')) document.querySelector('.loading').style.display = yes ? 'block' : 'none'
-	document.querySelector('html').style.cursor = yes ? 'progress' : ''
+	if(document.querySelector('.loading')){ document.querySelector('.loading').style.display = yes ? 'block' : 'none'}document.querySelector('html').style.cursor = yes ? 'progress' : ''
 }
 
 
@@ -168,7 +162,7 @@ function user_mail(){
 }
 
 function user_niveau(){
-	return user_details() && Object.keys(user_details()).length > 0 ? user_details()['id_niveau'] : 'da438e17-83fd-4b88-bea4-fff93e640c3f' //free
+	return user_details() && Object.keys(user_details()).length > 0 ? user_data('id_niveau') : 'da438e17-83fd-4b88-bea4-fff93e640c3f' //free
 }
 function user_meta_datas(){
 	return  user_details() && Object.keys(user_details()).length > 0 ? user_details()['user_metadata'] : {}
@@ -195,7 +189,7 @@ function user_data(dataName){
 
 
 
-async function logout(){
+async function logout(stay_here){
 	try{
 		const { error } = await supabase.auth.signOut()	
 	}catch(e){
@@ -203,7 +197,7 @@ async function logout(){
 	}
 	
 	window.localStorage.clear()
-	setTimeout(function(){window.location.assign('/')},1000)
+	if(!stay_here) setTimeout(function(){window.location.assign('/')},1000)
 }
 
 function is_demo(){
