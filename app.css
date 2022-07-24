@@ -45,6 +45,11 @@ body{
 	text-align: center;
 }
 
+body.swal2-shown > [aria-hidden="true"] {
+  transition: 0.1s filter;
+  filter: blur(10px);
+}
+
 .hidden {
   visibility: hidden !important;
 }
