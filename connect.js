@@ -105,7 +105,7 @@ async function process_if_mail_exists(force_not_exist){
 
 	document.querySelector('#acceptCGU').checked = already_exists
 	document.querySelector('.cgu_container').style.display= already_exists ? "none" : ""
-	set_alert((already_exists ? 'Un plaisir de vous revoir 🤗' : ''),'green')
+	set_alert((already_exists ? 'Un plaisir de vous revoir <span class="ignore">🤗</span>' : ''),'green')
 	change_disabled_btn()
 
 }

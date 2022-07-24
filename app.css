@@ -14,7 +14,7 @@ h1 {
   margin-top: 50px;
 }
 .nuit { filter: invert(1) hue-rotate(180deg) ; }
-.nuit .ignore { filter: invert(1) hue-rotate(180deg) ; }
+.nuit .ignore  { filter: invert(1) hue-rotate(180deg) ; }
 
 .local-logo {
   width: 10vh;
@@ -186,7 +186,7 @@ iframe{
   display: none;
 }
 
-@media (max-width:850px) {
+@media (max-width:1050px) {
   .nav-title {
     display: block !important;
   }
@@ -236,11 +236,6 @@ iframe{
     height: calc(100vh - 50px);
     overflow-y: auto;
   }
-  /*
-  #download::before {
-    content: ''  !important;
-  }
-  */
 
   #download {    
     height: auto;
@@ -488,22 +483,29 @@ iframe{
   margin-bottom: 20px;
 }
 
-#download {
-  background-color: #e17839;
-  border-radius: 8px; 
-  color: white;
-  padding: 10px;
-  font-weight: bold;
-  cursor: pointer;
-}
-
-#download:hover {
-  text-decoration: 2px underline white;
-}
 #download::before {
   content: 'Télécharger';
 }
 
 #welcomer {
   padding: 5px 10px;
+}
+
+.action {
+  background-color: #e14939;
+  border-radius: 8px;
+  color: white;
+  padding: 10px;
+  font-weight: bold;
+  cursor: pointer;
+  display: block;
+}
+.action:hover {
+  text-decoration: 2px underline white;
+}
+.noupdate {
+  border-radius: 5px;
+  background: #fd9e9e75;
+  padding: 50px;
+  margin: 5px;
 }

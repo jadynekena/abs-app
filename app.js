@@ -115,7 +115,7 @@ async function user_details_inputs(){
 					<option value="">Choisissez votre niveau d'abonnement</option>
 					`+await sub_levels()+`
 				</select>
-				<input type="text" maxlength="15" value="`+user_data('nom')+`" name="nom" id="nom" placeholder="Nom"  autocomplete="off">
+				<input type="text" maxlength="15" value="`+user_data('nom')+`" name="nom" id="nom" placeholder="Nom à 15 caractères maximum"  autocomplete="off">
 			</div>`
 }
 
@@ -175,7 +175,8 @@ async function download(){
 
 	const all = await my_amazon_datas(supabase_local)
 	if(all.error){
-		show_popup(true,'❌ Erreur',all.error.message,'Fermer',false,false)
+		show_popup(true,'❌ Erreur','<div class="noupdate">'+all.error.message+'</div>','Fermer',false,false)
+
 	}else{
 		const date_consultation = all.data.split('\n')[1].substring(1,11);
 		download_locally(all.data, date_consultation + '_' + user_data('nom') + '_' + my_departments.replaceAll(SEPARATOR,'-'))
@@ -301,24 +302,32 @@ async function user_credits(){
 	return {remain:Number(remain),max:Number(max),used:Number(used)}
 }
 
-async function disclaimer_credits(firsttime){
-
-	const {used, max, remain} = await user_credits()
+function disclaimer_credits(firsttime,used,max,remain){
 
 	return '<p>'+(firsttime ? 'Vous pourrez modifier ces valeurs jusqu\'à <strong id="nb_modifs">'+max+'</strong> fois plus tard.' :
 
 			'' +
 
 			`
-			<progress style="width: 60px;" value="`+used+`" max="`+max+`"></progress><br/>
+			<progress style="width: 200px;" value="`+used+`" max="`+max+`"></progress><br/>
 			<p>Vous avez utilisé <a><strong>`+used+`</strong>/<strong>`+max+`</strong></a> de vos crédits.</p>
 			`)
 		
-			+ (used >= max ? '<strong class="urgent">Vous ne pouvez plus modifier vos intérêts.</strong>' : '') 
+			+ (used >= max ? call_to_level_up('Vous devez changer votre niveau abonnement pour modifier.','Passer au niveau supérieur', window.location.pathname,'set_user_pricing()') : '') 
 			
 
 
 			+'</p>'
+}
+
+function call_to_level_up(text_for_user, action_text, link_action, on_click_action){
+
+	text_for_user = is_demo() ? 'Votre démo a expiré, merci de vous inscrire pour continuer.' : text_for_user
+	action_text = is_demo() ? "S'inscrire gratuitement" : action_text
+	link_action = is_demo() ? "/" : link_action
+	on_click_action = is_demo() ? 'logout()' : on_click_action
+
+	return '<div class="noupdate"><strong class="urgent">'+text_for_user+'</strong><br/><br/><a onclick="'+on_click_action+'" href="'+link_action+'" class="action">'+action_text+'</a></div>'
 }
 
 function save_and_run(dontsend_local_changes){
@@ -329,7 +338,8 @@ function save_and_run(dontsend_local_changes){
 async function interests(firsttime){
 	title = (firsttime ? welcome() : $('#interests').html()) 
 	all_deptmts = await  choice_departments()
-	disclaimer = await disclaimer_credits(firsttime)
+	const {used, max, remain} = await user_credits()	
+	disclaimer = disclaimer_credits(firsttime,used,max,remain)
 	content = '<p>'+(firsttime ? 'Pour commencer, c' : 'C')+'hoisissez vos 3 départements d\'intérêt.</p>' + all_deptmts + disclaimer 
 	next_steps = save_and_run()
 	btn_name = firsttime ? 'Suivant' : 'Enregistrer'
@@ -347,11 +357,17 @@ async function interests(firsttime){
 	}
 	change_or_create_popup_contents(opt)
 	$('select').get().map(e => e.value = e.getAttribute('default')) //default select values
-	
+
+	//no saving
+	if(used >= max) $('.swal2-confirm').remove()
+}
+
+async function check_credits(opt){	
 	// if used = max ---> keep disabling confirm button
 	const {used, max, remain} = await user_credits()
-	if(used >= max) always_disable()
+	if(used >= max) return false 
 
+	return true
 }
 
 function always_disable(selector){
@@ -414,7 +430,8 @@ async function save_my_datas(lets_show_all,callback, dontsend_local_changes){
 	if(user_details() && supabase){
 
 		//check current credits
-		//if max achieved : raise error
+		//if max achieved : remove departments
+		check_credits()
 
 		const { user, error } = await supabase.auth.update({ 
 			data: my_datas
