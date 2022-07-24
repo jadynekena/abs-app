@@ -211,7 +211,7 @@ async function is_timedout(){
 }
 
 function default_clicks(){
-	console.log('default clicks...')
+	//console.log('default clicks...')
 	on_event('click','#interests','interests(false)')
 
 	on_event('click','#account','account(false)')
