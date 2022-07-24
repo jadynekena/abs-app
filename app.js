@@ -266,11 +266,6 @@ function welcome(){
 	return 'Bienvenue sur Amazon Best Sellers ' + hand_shake()
 }
 
-async function number_of_available_edits(){
-	res = await all_credits()
-	return res['remain_credits']
-}
-
 async function all_credits(){
 	const supabase_local = createClient(SUPABASE_URL, SUPABASE_KEY);
 	me = await who_is_connected() ; 
@@ -296,23 +291,34 @@ function get_element_from_fake_json(fake_json,prop_name){
 	return res
 }
 
-async function disclaimer_credits(firsttime){
-	var res = await all_credits() //todo: optimize
+async function user_credits(){
+	
+	var res = await all_credits()
 	var remain = get_element_from_fake_json(res,'remain')
 	var max = get_element_from_fake_json(res,'max')
 	var used = get_element_from_fake_json(res,'used')
+	
+	return {remain:Number(remain),max:Number(max),used:Number(used)}
+}
+
+async function disclaimer_credits(firsttime){
+
+	const {used, max, remain} = await user_credits()
 
 	return '<p>'+(firsttime ? 'Vous pourrez modifier ces valeurs jusqu\'à <strong id="nb_modifs">'+max+'</strong> fois plus tard.' :
 
-			''
-			
-			+
-			'Nombre de modifications MAXIMAL: <strong>'+max+'</strong><br/>' +
-			'Nombre de modifications utilisées: <strong>'+used+'</strong><br/>' +
-			'Nombre de modifications restantes: <strong>'+remain+'</strong><br/>' 
+			'' +
+
+			`
+			<progress style="width: 60px;" value="`+used+`" max="`+max+`"></progress><br/>
+			<p>Vous avez utilisé <a><strong>`+used+`</strong>/<strong>`+max+`</strong></a> de vos crédits.</p>
+			`)
+		
+			+ (used >= max ? '<strong class="urgent">Vous ne pouvez plus modifier vos intérêts.</strong>' : '') 
 			
 
-			) +'</p>'
+
+			+'</p>'
 }
 
 function save_and_run(dontsend_local_changes){
@@ -340,8 +346,17 @@ async function interests(firsttime){
 		fullscreen: firsttime
 	}
 	change_or_create_popup_contents(opt)
-	$('select').get().map(e => e.value = e.getAttribute('default'))
+	$('select').get().map(e => e.value = e.getAttribute('default')) //default select values
+	
+	// if used = max ---> keep disabling confirm button
+	const {used, max, remain} = await user_credits()
+	if(used >= max) always_disable()
 
+}
+
+function always_disable(selector){
+	if(!selector) selector = '.swal2-confirm'
+	$(selector).remove()
 }
 
 function change_or_create_popup_contents(opt){
@@ -397,6 +412,10 @@ async function save_my_datas(lets_show_all,callback, dontsend_local_changes){
 
 	
 	if(user_details() && supabase){
+
+		//check current credits
+		//if max achieved : raise error
+
 		const { user, error } = await supabase.auth.update({ 
 			data: my_datas
 		})
