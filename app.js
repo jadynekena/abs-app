@@ -94,7 +94,8 @@ async function sub_levels(){
 	
 	if(data){
 
-		res  = data.map(e => '<option value="'+e['id_niveau']+'">'+e['etiquette_niveau'] + '     |     '
+		res  = data.map(e => '<option  '+((is_demo() && e['etiquette_niveau'] === 'FREE') ? ' selected="selected" ' : '')+
+									'   value="'+e['id_niveau']+'">'+e['etiquette_niveau'] + '     |     '
 																  + e['intitule_niveau'] + '     |     '
 																  + e['tarif_mensuel'] + ' € / mois' 
 
@@ -127,7 +128,7 @@ async function account(firsttime){
 	btn_name = firsttime ? 'Suivant' : 'Enregistrer'
 	show_popup(true,title,content,btn_name,!firsttime,firsttime,next_steps)
 
-	$('#niveau')[0].value = user_data('id_niveau')	
+	$('#niveau')[0].value = user_niveau()
 	on_event('input','#nom','disable_space(event)')
 }
 
@@ -140,13 +141,38 @@ function show_all(yes){
 	Array.from( document.querySelectorAll('.nav, .whole-body') ).forEach(e => e.style.display = yes ? '' : 'none' )
 }
 
-function set_clicks(){
+async function set_clicks(){
+
+	on_event('click','#logout','logout()')
+	
+	
+
+	if(await is_demo()){
+		const timedout = await is_timedout()
+		console.log({timedout})
+		if(timedout){
+			on_event('click','body','timeout_demo(event,"Fermer,💡, 📴 Déconnexion")')	
+		} else{
+			default_clicks()
+		}
+
+	}else{
+		default_clicks()
+	}
+
+}
+
+async function is_timedout(){
+	return !(await enough_credits())
+}
+
+function default_clicks(){
+	console.log('default clicks...')
 	on_event('click','#interests','interests(false)')
 
 	on_event('click','#account','account(false)')
 	on_event('click','#keywords','loading_feature(this.innerHTML)')
 	on_event('click','#you','account(false)')
-	on_event('click','#logout','logout()')
 	on_event('click', '#download','download()')
 	on_event('click','.top-tabs-container','hide_back_menu(this)')
 	
@@ -155,6 +181,15 @@ function set_clicks(){
 	on_event('click','[for="sub-tab-2"]','assign_iframe_url(this,"raw_datas")')
 
 
+}
+
+function timeout_demo(ceci,list_to_ignore){
+	text = event.target.innerText.trim()
+	//console.log(text)
+	if((!list_to_ignore.includes(text) && text !== '') || event.target.id === "download" ){
+		show_popup(true,'<span class="urgent">❌ Demo expirée</span>',call_to_level_up(),'Fermer',false,false)	
+	} 
+	
 }
 
 async function download(){
@@ -362,7 +397,7 @@ async function interests(firsttime){
 	if(used >= max) $('.swal2-confirm').remove()
 }
 
-async function check_credits(opt){	
+async function enough_credits(){	
 	// if used = max ---> keep disabling confirm button
 	const {used, max, remain} = await user_credits()
 	if(used >= max) return false 
@@ -429,9 +464,13 @@ async function save_my_datas(lets_show_all,callback, dontsend_local_changes){
 	
 	if(user_details() && supabase){
 
+
 		//check current credits
 		//if max achieved : remove departments
-		check_credits()
+		if(await enough_credits() === false){
+			delete my_datas['liste_departements']
+			//alert('Crédits insuffisants.')
+		}  
 
 		const { user, error } = await supabase.auth.update({ 
 			data: my_datas
@@ -440,9 +479,15 @@ async function save_my_datas(lets_show_all,callback, dontsend_local_changes){
 
 	}else{
 
-		//console.log({myname})
 		window.localStorage.setItem('nom',myname)
-		window.localStorage.setItem('liste_departements',my_departments)
+
+
+		//check current credits
+		//if max achieved : no change on departments
+		if(await enough_credits()){
+			window.localStorage.setItem('liste_departements',my_departments)
+		}  
+
 		window.localStorage.setItem('mode',mymode)
 
 		

@@ -13,6 +13,10 @@ function on_event(eventtype,selector, callback){
 
 }
 
+function noclick(selector){
+	document.querySelector(selector).removeEventListener('click',console.log)
+}
+
 
 function get_light(){
 	return document.querySelector('html').className === '' ? 'jour' : 'nuit'
@@ -163,6 +167,9 @@ function user_mail(){
 	return user_details() && Object.keys(user_details()).length > 0 ? user_details()['email'] : 'demo@amazonbestsellers.org'
 }
 
+function user_niveau(){
+	return user_details() && Object.keys(user_details()).length > 0 ? user_details()['id_niveau'] : 'da438e17-83fd-4b88-bea4-fff93e640c3f' //free
+}
 function user_meta_datas(){
 	return  user_details() && Object.keys(user_details()).length > 0 ? user_details()['user_metadata'] : {}
 }
