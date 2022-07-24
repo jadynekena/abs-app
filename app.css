@@ -1,3 +1,7 @@
+html {
+  visibility: hidde; /*show ONLY IF auth or DEMO, especially for embedded*/ 
+}
+
 *, a {
 	font-family: Arial;
 	font-size: inherit;
@@ -93,11 +97,17 @@ iframe{
   max-width: 98vw !important;
   display: initial !important;
   background-color: #ffffffb3 !important;
+  border-radius: 10px !important;
 }
 
 .swal-wide {
   width: 95vw !important;
   min-height: 97vh;
+  /*
+  width: 95% !important;
+  min-height: 97%;
+  */
+  max-height: 100%;
 }
 .swal2-title {
   padding: 0 !important;

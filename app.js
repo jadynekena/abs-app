@@ -40,14 +40,27 @@ function show_logo(){
 
 }
 function handle_embed(){
-	if(inIframe() && !is_demo()){
-		if (confirm('Déconnecter votre compte pour être en mode démo ?')) logout(true)	
-	} 
+	if(inIframe()){
+
+
+		if(!is_demo()){
+			if (confirm('Déconnecter votre compte pour être en mode démo ?')) logout(true)	
+		} 
+		
+		//if mobile : add margin top
+		if(isMobileDevice()) $('body').css('margin-top', '50px')
+	}
+
+
+}
+
+function isMobileDevice(){
+	const ua = navigator.userAgent;
+	return (/Mobile|Android|iP(hone|od)|IEMobile|BlackBerry|Kindle|Silk-Accelerated|(hpw|web)OS|Opera M(obi|ini)/.test(ua)) 
 }
 
 function first_arrival_handler(){
-	first_connection = myname.trim().length === 0
-
+	first_connection = myname.trim().length === 0 || my_departments.trim().length < 3
 	if(first_connection){
 		show_all(false)
 		account(true)
@@ -91,7 +104,7 @@ async function filter_departements(ceci){
 }
 
 function update_username_locally(){
-	document.querySelector('#you').innerText = user_data('nom')
+	document.querySelector('#you').innerText = user_data('nom') || 'Anonyme'
 }
 
 async function sub_levels(){
@@ -469,7 +482,7 @@ function change_or_create_popup_contents(opt){
 }
 
 function get_name_to_save(){
-	return $('#nom').val() || user_data('nom')
+	return $('#nom').val() || user_data('nom') || 'Anonyme'
 }
 
 function get_deptmts_to_save(){
