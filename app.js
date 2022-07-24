@@ -257,7 +257,7 @@ async function send_feedback(){
 	//console.log({feedback})
 
 	await supabase_local.from('feedback').insert(feedback)
-	alert('✅ Message reçu. Un mail de confirmation vous a été envoyé.')
+	alert('✅ Message reçu. Nous reviendrons vers vous dans les meilleurs délais.') //Un mail de confirmation vous a été envoyé.
 }
 
 function default_clicks(){
