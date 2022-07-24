@@ -19,6 +19,7 @@ function exactly_three_dptmts(list_with_commas){
 }
 
 function main(){
+	
 	apply_theme()
 	show_logo()
 	set_clicks()
@@ -136,7 +137,7 @@ function disable_space(event){
 
 
 function show_all(yes){
-	Array.from( document.querySelectorAll('.nav, .iframe_wrapper') ).forEach(e => e.style.display = yes ? '' : 'none' )
+	Array.from( document.querySelectorAll('.nav, .whole-body') ).forEach(e => e.style.display = yes ? '' : 'none' )
 }
 
 function set_clicks(){
