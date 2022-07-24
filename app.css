@@ -429,6 +429,7 @@ iframe{
   border-radius: 5px;
   padding: 5px;
   cursor: pointer;
+  font-size: calc(14px + 1vh + 2vw);
 }
 
 .sub-tabs-container label:active {
@@ -488,4 +489,9 @@ iframe{
 
 #welcomer {
   padding: 5px 10px;
+}
+
+
+.selected_sub_tab { 
+  border: 10px solid #ff99004a;
 }

@@ -151,8 +151,8 @@ function set_clicks(){
 	on_event('click','.top-tabs-container','hide_back_menu(this)')
 	
 	//sub tabs
-	on_event('click','[for="sub-tab-1"]','assign_iframe_url("kpi")')
-	on_event('click','[for="sub-tab-2"]','assign_iframe_url("raw_datas")')
+	on_event('click','[for="sub-tab-1"]','assign_iframe_url(this,"kpi")')
+	on_event('click','[for="sub-tab-2"]','assign_iframe_url(this,"raw_datas")')
 
 
 }
@@ -484,7 +484,7 @@ function set_iframe(dptmts,forcing){
 
 		//update only visible frame
 		const visible_iframe_id = current_visible_iframe_id()
-		assign_iframe_url(visible_iframe_id,forcing)
+		assign_iframe_url(null,visible_iframe_id,forcing)
 
 		//unassign other iframes if forcing
 		if(forcing){
@@ -503,21 +503,30 @@ function set_iframe(dptmts,forcing){
 
 function current_visible_iframe_id(){
 
-	return $('iframe:visible')[0].id
+	return $('iframe:visible')[0] ? $('iframe:visible')[0].id : 'no-frame-detected'
 }
 
-function assign_iframe_url(iframe_id,forcing){
+function assign_iframe_url(src_of_change,iframe_id,forcing){
+	//console.log({src_of_change})
+	if(src_of_change){
+		$('label').removeClass('selected_sub_tab')
+		$(src_of_change).addClass('selected_sub_tab')
+	}
+
 	loading(true)
 
 	curr_iframe = document.getElementById(iframe_id)
-	final_url = curr_iframe.getAttribute('url')
 
-	if(curr_iframe.src !== final_url || curr_iframe.src === "" || forcing){
-		//console.log({'assigning for':iframe_id})
-		curr_iframe.src = final_url	
-	} else{
-		//console.log('not assigning: ',final_url)
-		loading(false)	
+	if(curr_iframe){
+		final_url = curr_iframe.getAttribute('url')
+	
+		if(curr_iframe.src !== final_url || curr_iframe.src === "" || forcing){
+			//console.log({'assigning for':iframe_id})
+			curr_iframe.src = final_url	
+		} else{
+			//console.log('not assigning: ',final_url)
+			loading(false)	
+		}
 	}
 
 	
