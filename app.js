@@ -392,21 +392,21 @@ function disclaimer_credits(firsttime,used,max,remain){
 			<p>Vous avez utilisé <a><strong>`+used+`</strong>/<strong>`+max+`</strong></a> de vos crédits.</p>
 			`)
 		
-			+ (used >= max ? call_to_level_up('Vous devez changer votre niveau abonnement pour modifier.','Passer au niveau supérieur', window.location.pathname,'account()') : '') 
+			+ (used >= max ? call_to_level_up('Vous devez changer votre niveau abonnement pour modifier.','Passer au niveau supérieur', "",'account()') : '') 
 			
 
 
 			+'</p>'
 }
 
-function call_to_level_up(text_for_user, action_text, link_action, on_click_action){
+function call_to_level_up(text_for_user, action_text, link_action_with_href, on_click_action){
 
 	text_for_user = is_demo() ? 'Votre démo a expiré, merci de vous inscrire pour continuer.' : text_for_user
 	action_text = is_demo() ? "S'inscrire gratuitement" : action_text
-	link_action = is_demo() ? "/" : link_action
+	link_action_with_href = is_demo() ? "href='/'" : link_action_with_href
 	on_click_action = is_demo() ? 'logout()' : on_click_action
 
-	return '<div class="noupdate"><strong class="urgent">'+text_for_user+'</strong><br/><br/><a onclick="'+on_click_action+'" href="'+link_action+'" class="action">'+action_text+'</a></div>'
+	return '<div class="noupdate"><strong class="urgent">'+text_for_user+'</strong><br/><br/><a onclick="'+on_click_action+'" '+link_action_with_href+' class="action">'+action_text+'</a></div>'
 }
 
 function save_and_run(dontsend_local_changes){
