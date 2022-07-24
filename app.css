@@ -525,3 +525,41 @@ iframe{
   padding: 50px;
   margin: 5px;
 }
+
+#helper {
+  z-index: 999;
+  right: 0;
+}
+.fixed {
+  position: fixed;
+  bottom: 0;
+  -webkit-transform: translate3d(0,0,0);
+  transform: translate3d(0,0,0);
+  text-align: end;
+  margin: 15px;
+  display: flex;
+}
+.question {
+  font-size: 30px;
+  -webkit-filter: grayscale(100%);
+  cursor: pointer;
+  padding: 5px;
+  border-radius: 100px;
+  background-color: #86868670;
+  opacity: 0.5;
+}
+
+.question:hover {
+  opacity: 100%;
+  border: 2px black double;
+}
+
+.textarea {
+  resize: none;
+  width: 100%;
+  min-height: 25vh;
+  padding: 10px;
+  border-radius: 10px;
+  border-style: none;
+  margin: 20px 0;
+}

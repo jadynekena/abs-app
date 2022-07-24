@@ -201,6 +201,7 @@ function show_all(yes){
 async function set_clicks(){
 
 	on_event('click','#logout','logout()')
+	on_event('click','#helper','helper()')
 	
 	
 
@@ -221,6 +222,42 @@ async function set_clicks(){
 
 async function is_timedout(){
 	return !(await enough_credits())
+}
+
+function helper(){
+	show_popup(true,"Besoin d'aide ?",'<div style="text-align: left;">Si vous avez :'+items_fback()+' Merci de nous détailler votre demande.'+feedback_input()+'</div>','Envoyer',true,false,'send_feedback()' )
+}
+
+function items_fback(){
+	return `<ul style="text-align: justify;padding-left: 30px;margin: 15px;">
+				<li>une question</li>
+				<li>une remarque</li>
+				<li>une suggestion</li>
+				<li>un feedback</li>
+				<li>etc.</li>
+			</ul>
+	`
+}
+function feedback_input(){
+	return `<textarea id="myfeedback" maxlength="1000" placeholder="Votre demande..." class="textarea"></textarea>`
+}
+
+async function send_feedback(){
+	const supabase_local = createClient(SUPABASE_URL,SUPABASE_KEY)
+	const myfeedback = $('#myfeedback').val().trim()
+
+	if(!myfeedback) return alert('❌ Votre message est vide : impossible de l\'envoyer.')
+	
+
+	var feedback =  my_details
+	feedback['contenu'] = myfeedback
+	delete feedback['liste_departements']
+
+
+	//console.log({feedback})
+
+	await supabase_local.from('feedback').insert(feedback)
+	alert('✅ Message reçu. Un mail de confirmation vous a été envoyé.')
 }
 
 function default_clicks(){
