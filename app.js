@@ -158,10 +158,12 @@ function set_clicks(){
 
 async function download(){
 
-	const supabase_local = createClient(SUPABASE_URL, SUPABASE_KEY)
-
 	//say that we downloaded
-	var id_download = await supabase_local.from('telechargements').insert(await download_details())
+	const supabase_local = createClient(SUPABASE_URL, SUPABASE_KEY)
+	my_details = await get_my_details()
+	my_details['requete_telechargement'] = 'dernieres_donnees_cet_user'
+	var id_download = await supabase_local.from('telechargements').insert(my_details).match({id: id_download})
+
 	//console.log({id_download})
 
 	if(id_download &&  id_download.data && id_download.data[0] && id_download.data[0]['id']	){
@@ -177,9 +179,9 @@ async function download(){
 		const date_consultation = all.data.split('\n')[1].substring(1,11);
 		download_locally(all.data, date_consultation + '_' + user_data('nom') + '_' + my_departments.replaceAll(SEPARATOR,'-'))
 
-		await supabase.from('telechargements').update({
-			taille_telechargement: size_of_variable(all.data)
-		}).match({id: id_download})
+		my_details['taille_telechargement'] =  size_of_variable(all.data)
+
+		await supabase_local.from('telechargements').update(my_details).match({id: id_download})
 
 	}
 }

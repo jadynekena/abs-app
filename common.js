@@ -55,6 +55,16 @@ async function user_niveau(){
 }
 
 async function send_my_details(forcing){
+	my_details = await get_my_details()
+	if(forcing || (window.location.pathname !== '/' && !currently_local_host() && all_keys_have_value(my_details))){
+		send_all(my_details)
+	}
+
+	return my_details
+}
+
+async function get_my_details(){
+	
 	adresse_ip = await myIP()
 	id_user =  await who_is_connected()
 	id_niveau =  await  user_niveau()
@@ -65,12 +75,8 @@ async function send_my_details(forcing){
 		id_user: id_user,
 		id_niveau: id_niveau,
 	}
-
-	if(forcing || (window.location.pathname !== '/' && !currently_local_host() && all_keys_have_value(my_details))){
-		send_all(my_details)
-	}
-
-	return my_details
+ 	
+ 	return my_details;
 }
 
 function all_keys_have_value(my_details){
@@ -336,13 +342,6 @@ function inIframe() {
 async function my_amazon_datas(supabase){
 	const res = await supabase.rpc('dernieres_donnees_cet_user',{id_user: await who_is_connected()}).csv()
 	return res;
-}
-
-async function download_details(){
-	return {
-		requete_telechargement: 'dernieres_donnees_cet_user',
-		id_user: await who_is_connected()
-	}
 }
 
 function download_locally(csv,final_name){
