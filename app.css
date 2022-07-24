@@ -382,7 +382,6 @@ iframe{
   padding: 15px;
   font-weight: bold;
   min-width: 200px;
-  font-size: calc(14px + 250% - 3vh);
 }
 
 .tab:hover {
@@ -419,7 +418,7 @@ iframe{
 /* Sub-tabs */
 .sub-tabs-container {
   margin: 20px;
-  display: inline-table;
+  display: ruby-text;
 }
 .sub-tabs-container label {
   color: #030700;

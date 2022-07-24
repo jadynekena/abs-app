@@ -127,6 +127,23 @@ async function get_content(url,sync_mode){
 	}
 }
 
+async function post_content(URL, content){
+	const requestOptions = {
+	    method: 'POST',
+	    headers: { 'Content-Type': 'application/json' },
+	    body: JSON.stringify(content)
+	};
+	return await fetch(URL, requestOptions)
+	    .then(response  => response.text())
+}
+
+async function call_function(function_name, parameters, JSONMODE){
+	res = await post_content(SUPABASE_URL + '/rest/v1/rpc/' + function_name + '?apikey=' + SUPABASE_KEY,parameters)
+	if(JSONMODE) res = JSON.parse(res)
+
+	return res
+}
+
 
 function loading(yes){
 	if(document.querySelector('.loading')) document.querySelector('.loading').style.display = yes ? 'block' : 'none'

@@ -275,22 +275,32 @@ async function all_credits(){
 	const supabase_local = createClient(SUPABASE_URL, SUPABASE_KEY);
 	me = await who_is_connected() ; 
 	to_send = {
-		'id_user':me,
+		'id_user_value':me,
 	}
 
 	if(is_demo()) to_send['adresse_ip_str'] = await myIP();
 
-	res = await supabase_local.rpc('user_credits',to_send);
 
-	return res.data && res.data[0] ? res.data[0] : {}
+	let res = await call_function('credits',to_send,true) //this is text "{remain:0, max:0, used:0}"
 
+	return res
+}
+
+function get_element_from_fake_json(fake_json,prop_name){
+	var res = ''
+	var temp = fake_json.split(',').filter(e => e.includes(prop_name)).map(e => e.replace('{','').replace('}',''))
+	if(temp){
+		res = temp[0].split(':')[1]
+	}
+
+	return res
 }
 
 async function disclaimer_credits(firsttime){
 	var res = await all_credits() //todo: optimize
-	var remain = res['remain_credits']
-	var max = res['max_credits']
-	var used = res['used_credits']
+	var remain = get_element_from_fake_json(res,'remain')
+	var max = get_element_from_fake_json(res,'max')
+	var used = get_element_from_fake_json(res,'used')
 
 	return '<p>'+(firsttime ? 'Vous pourrez modifier ces valeurs jusqu\'à <strong id="nb_modifs">'+max+'</strong> fois plus tard.' :
 
