@@ -368,7 +368,7 @@ function size_of_variable( object ) {
             bytes += 4;
         }
         else if ( typeof value === 'string' ) {
-            bytes += value.length * 2;
+            bytes += value.length * 1; //not 2 for csv
         }
         else if ( typeof value === 'number' ) {
             bytes += 8;
