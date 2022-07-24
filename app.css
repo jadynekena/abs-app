@@ -92,6 +92,7 @@ iframe{
 .swal2-popup {
   max-width: 98vw !important;
   display: initial !important;
+  background-color: #ffffffb3 !important;
 }
 
 .swal-wide {
@@ -510,7 +511,7 @@ iframe{
 }
 .noupdate {
   border-radius: 5px;
-  background: #fd9e9e75;
+  background: #ff000052;
   padding: 50px;
   margin: 5px;
 }
