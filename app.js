@@ -41,7 +41,9 @@ function handle_embed(){
 
 		if(!is_demo()){
 			show_all(false)
-			if (confirm('ℹ️ Déconnecter votre compte pour être en mode démo ?\nCliquez sur Annuler pour maintenir votre session.')) logout(true)	
+			//if (confirm('ℹ️ Déconnecter votre compte pour être en mode démo ?\nCliquez sur Annuler pour maintenir votre session.')) logout(true)	
+			show_popup(true,'Vous êtes en mode demo','ℹ️ Vous pouvez aller sur votre session directement via <a target="_blank" href="https://app.amazonbestsellers.org">app.amazonbestsellers.org</a>.', 'Fermer')
+			
 			show_all(true)
 		} 
 		
