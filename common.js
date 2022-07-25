@@ -11,8 +11,15 @@ var selected_departement = ''
 
 
 
-function handle_enter(event,callback){
-	if(event.key === "Enter") eval(callback)
+async function handle_enter(next_step_if_enter_str){
+	//console.log('\n')
+	//console.log(event.key)
+	//console.log(stuff)
+	if(event.key === "Enter"){
+		eval(next_step_if_enter_str)
+	}else{
+
+	}
 }
 
 function on_event(eventtype,selector, callback){

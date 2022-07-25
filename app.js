@@ -127,7 +127,7 @@ async function user_details_inputs(){
 	enable_level = is_demo() ? ' disabled ' : ''
 	return `<div class="user_details_inputs">
 				<input type="email" value="`+mymail+`" disabled="" autocomplete="off">
-				<select onchange="this.setAttribute('chosen',this.value); " `+enable_level+` name="niveau" id="niveau">
+				<select chosen="" onchange="this.setAttribute('chosen',this.value); " `+enable_level+` name="niveau" id="niveau">
 					<option value="">Choisissez votre niveau d'abonnement</option>
 					`+await sub_levels()+`
 				</select>

@@ -393,7 +393,7 @@ function main(){
 		on_event('change','#showpass','switch_show_pass()')
 		on_event('click','#acceptCGU','change_disabled_btn()')
 		on_event('click','#connect','signup(event)')
-		on_event('keyup','input','handle_enter(event,signup(event))')
+		on_event('keyup','input','handle_enter("await signup(event)")')
 		on_event('input','#mymail, #mypass','on_mail_change(event)')
 		on_event('click','#reset','switch_mode()')
 
