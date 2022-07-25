@@ -116,7 +116,7 @@ async function signup(e){
 				setInterval(function(a){
 
 					counter = counter-1
-					set_alert(`Inscription OK : un mail de confirmation vous a été envoyé.<br/>
+					set_alert(`Bienvenue !<br/>
 								Vous allez être connecté dans ${counter} secondes...`,'green')	
 					if(counter === 0){
 						goto_app()
