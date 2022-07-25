@@ -15,6 +15,9 @@ async function signup(e){
 	//recovery mode
 	if(is_in_recovery_mode){
 
+		//check if old password is there
+		if($('#oldpass').val().length ===0) return set_alert('Merci de fournir votre ancien mot de passe.','red')
+
 		curr_user = await attempt_sigin_with_old_pass()
 		//console.log({curr_user})
 

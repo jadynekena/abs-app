@@ -107,7 +107,7 @@ function update_username_locally(){
 
 async function sub_levels(){
 	const supabase_local = createClient(SUPABASE_URL, SUPABASE_KEY);
-	const {data, error} = await supabase_local.from('niveaux').select('*').order('tarif_mensuel')
+	const {data, error} = await supabase_local.from('niveaux').select('*').order('tarif_mensuel,tarif_final')
 	
 	if(data){
 
@@ -320,6 +320,7 @@ async function download(){
 		my_details['taille_telechargement'] =  size_of_variable(all.data)
 
 		await supabase_local.from('telechargements').update(my_details).match({id: id_download})
+		show_popup(true,'✅ Téléchargement terminé','Votre fichier CSV du jour a été téléchargé avec succès.','Fermer')
 
 	}
 }
@@ -548,6 +549,7 @@ function set_iframe(dptmts,forcing){
 
 	setTimeout(function(){
 
+
 		//update only visible frame
 		const visible_iframe_id = current_visible_iframe_id()
 		assign_iframe_url(null,visible_iframe_id,forcing)
@@ -587,10 +589,8 @@ function assign_iframe_url(src_of_change,iframe_id,forcing){
 		final_url = curr_iframe.getAttribute('url')
 	
 		if(curr_iframe.src !== final_url || curr_iframe.src === "" || forcing){
-			//console.log({'assigning for':iframe_id})
 			curr_iframe.src = final_url	
 		} else{
-			//console.log('not assigning: ',final_url)
 			loading(false)	
 		}
 	}

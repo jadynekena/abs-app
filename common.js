@@ -311,7 +311,7 @@ async function enough_credits(){
 }
 
 function show_all(yes){
-	if(yes) return setTimeout(function(){apply_show(yes)}, TIMER_TO_SHOW_BODY)
+	if(yes) return setTimeout(function(){apply_show(yes)}, TIMER_TO_SHOW_BODY/2)
 	
 
 	apply_show(yes)
