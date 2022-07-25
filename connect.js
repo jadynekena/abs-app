@@ -1,6 +1,5 @@
 const TESTING_MODE_SO_STAY_HERE = false;
 const COUNTER_BEGIN = 3
-const TIMER_TO_SHOW_BODY = 500
 
 async function signup(e){
 	e.preventDefault()

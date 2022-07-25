@@ -2,7 +2,8 @@ const SUPABASE_URL = "https://ojfpzzbgxyrtwmqolqwa.supabase.co"
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9qZnB6emJneHlydHdtcW9scXdhIiwicm9sZSI6ImFub24iLCJpYXQiOjE2NTc1MTU2OTMsImV4cCI6MTk3MzA5MTY5M30.Cw-t8RhhDHs0vKA6Q-zpQRL5JrX9vMX5g9oThszCEC4'
 const { createClient } = supabase
 var supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
-const SEPARATOR = ';'
+const SEPARATOR = ';';
+const TIMER_TO_SHOW_BODY = 500;
 
 var my_departments = user_data('liste_departements')
 var myname =  user_data('nom')
@@ -310,6 +311,13 @@ async function enough_credits(){
 }
 
 function show_all(yes){
+	if(yes) return setTimeout(function(){apply_show(yes)}, TIMER_TO_SHOW_BODY)
+	
+
+	apply_show(yes)
+}
+
+function apply_show(yes){
 	Array.from( document.querySelectorAll('.nav, .whole-body') ).forEach(e => e.style.display = yes ? '' : 'none' )
 }
 
