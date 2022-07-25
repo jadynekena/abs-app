@@ -145,7 +145,7 @@ async function account(firsttime){
 	content = '<p>'+(firsttime ? '<span class="ignore">👤</span> Commençons par votre identité.' : '<i class="fa-duotone fa-user"></i>Vos informations') +'</p>' 
 	content += await user_details_inputs()
 	content += !firsttime ? delete_acc() : ''
-	next_steps = firsttime ? 'save_my_datas(false,"interests('+firsttime+')")' : save_and_run()
+	next_steps = firsttime ? 'save_my_datas(false,"update_username_locally();interests('+firsttime+')")' : save_and_run()
 	btn_name = firsttime ? 'Suivant' : 'Enregistrer'
 	show_popup(true,title,content,btn_name,!firsttime,firsttime,next_steps)
 
