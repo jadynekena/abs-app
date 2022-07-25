@@ -2,14 +2,23 @@ const SUPABASE_URL = "https://ojfpzzbgxyrtwmqolqwa.supabase.co"
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9qZnB6emJneHlydHdtcW9scXdhIiwicm9sZSI6ImFub24iLCJpYXQiOjE2NTc1MTU2OTMsImV4cCI6MTk3MzA5MTY5M30.Cw-t8RhhDHs0vKA6Q-zpQRL5JrX9vMX5g9oThszCEC4'
 const { createClient } = supabase
 var supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+const SEPARATOR = ';'
+
+var my_departments = user_data('liste_departements')
+var myname =  user_data('nom')
+var mymode = user_data('mode')
+var selected_departement = ''
+
+
+
+function handle_enter(event,callback){
+	if(event.key === "Enter") eval(callback)
+}
 
 function on_event(eventtype,selector, callback){
 	load_common_scripts_if_needed()
-
-	//console.log({selector})
-	document.querySelector(selector).removeEventListener(eventtype,console.log)
-	document.querySelector(selector).addEventListener(eventtype,function(event){eval(callback)})	
-
+	$(selector).off(eventtype)
+	$(selector).on(eventtype,function(event){eval(callback)})
 
 }
 
@@ -153,6 +162,149 @@ function current_access_token_exists(){
 	return 	window.localStorage.getItem('supabase.auth.token') ? JSON.parse(window.localStorage.getItem('supabase.auth.token'))['currentSession']['access_token'] : false
 }
 
+
+function get_name_to_save(){
+	return $('#nom').val() || user_data('nom') || 'Anonyme'
+}
+
+function get_deptmts_to_save(){
+	//console.log({selected_departement})
+	return my_selection() || selected_departement || user_data('liste_departements')
+}
+
+function get_nb_maj_to_save(){
+	return user_data('nb_maj') || 0
+}
+
+async function get_id_niveau_to_save(){
+	return $('#niveau').val() || user_niveau()
+}
+
+
+function my_selection(){
+	return $('.one_select select:visible').get().map(e => e.value).join(SEPARATOR)
+}
+
+
+async function save_my_datas(lets_show_all,callback, dontsend_local_changes){
+	//console.log({dontsend_local_changes})
+
+	myname = get_name_to_save()
+	my_departments = get_deptmts_to_save()
+	mymode = get_light()
+	nb_maj = get_nb_maj_to_save()
+	id_niveau = await get_id_niveau_to_save()
+
+	my_datas = {
+		nom: myname,
+		liste_departements: my_departments,
+		mode: mymode,
+		id_niveau: id_niveau
+	} 
+
+	if(dontsend_local_changes) delete my_datas['liste_departements']
+
+	show_all(lets_show_all)
+
+	
+	if(user_details() && supabase){
+
+
+		//check current credits
+		//if max achieved : remove departments
+		if(await enough_credits() === false){
+			delete my_datas['liste_departements']
+			//alert('Crédits insuffisants.')
+		}  
+
+		const { user, error } = await supabase.auth.update({ 
+			data: my_datas
+		})
+
+
+	}else{
+
+		window.localStorage.setItem('nom',myname)
+
+
+		//check current credits
+		//if max achieved : no change on departments
+		if(await enough_credits()){
+			window.localStorage.setItem('liste_departements',my_departments)
+		}  
+
+		window.localStorage.setItem('mode',mymode)
+
+		
+	}
+
+	if(callback){
+		eval(callback)	
+	} 
+	
+	hist = await send_my_details(true)
+	//console.log({hist})
+	
+	//{if(!dontsend_local_changes) update_html_view()}
+	
+	return my_datas
+
+}
+
+
+
+
+async function all_credits(){
+	const supabase_local = createClient(SUPABASE_URL, SUPABASE_KEY);
+	me = await who_is_connected() ; 
+	to_send = {
+		'id_user_value':me,
+	}
+
+	if(is_demo()) to_send['adresse_ip_str'] = await myIP();
+
+
+	let res = await call_function('credits',to_send,true) //this is text "{remain:0, max:0, used:0}"
+
+	return res
+}
+
+
+
+async function user_credits(){
+	
+	var res = await all_credits()
+	var remain = get_element_from_fake_json(res,'remain')
+	var max = get_element_from_fake_json(res,'max')
+	var used = get_element_from_fake_json(res,'used')
+	
+	return {remain:Number(remain),max:Number(max),used:Number(used)}
+}
+
+
+
+function get_element_from_fake_json(fake_json,prop_name){
+	var res = ''
+	var temp = fake_json.split(',').filter(e => e.includes(prop_name)).map(e => e.replace('{','').replace('}',''))
+	if(temp){
+		res = temp[0].split(':')[1]
+	}
+
+	return res
+}
+
+async function enough_credits(){	
+	// if used = max ---> keep disabling confirm button
+	const {used, max, remain} = await user_credits()
+	if(used >= max) return false 
+
+	return true
+}
+
+function show_all(yes){
+	Array.from( document.querySelectorAll('.nav, .whole-body') ).forEach(e => e.style.display = yes ? '' : 'none' )
+}
+
 function user_details(){
 	return supabase &&  supabase.auth ? supabase.auth.user() : {}
 }
@@ -224,9 +376,9 @@ async function who_is_connected(){
 
 function load_common_scripts_if_needed(callback){
 
-	links_src = ['https://code.jquery.com/jquery-3.6.0.slim.min.js']
+	links_src = [] //default already ok with 'https://code.jquery.com/jquery-3.6.0.slim.min.js'
 
-	if(currently_local_host()) links_src.push('https://livejs.com/live.js')
+	if(currently_local_host()) links_src.push('/live.js')
 
 	for (const link of links_src){
 

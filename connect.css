@@ -6,6 +6,10 @@ body {
   color: #666;
 }
 
+a {
+  cursor: pointer;
+}
+
 .nuit { filter: invert(1) hue-rotate(180deg) ; }
 .nuit .ignore { filter: invert(1) hue-rotate(180deg) ; }
 
@@ -25,7 +29,7 @@ body {
   border-radius: 5px;
   background: #fff;
   box-shadow: 1px 1px 1px #666;
-  height: 570px;
+  min-height: 600px;
 }
 
 .login input, .login button {
@@ -40,7 +44,7 @@ body {
 }
 
 .login input[type=text]:hover {
-  border-color: #F44336;
+  border-color: green;
   outline: none;
   transition: all .2s ease-in-out;
 } 
@@ -110,6 +114,28 @@ body {
   background-color: #fff9f3;
 }
 
+.showpass_container {
+  text-align: center;
+  display: inline-flex;
+}
+
+#showpass {
+  width: auto;
+  margin: 0;
+  display: none;
+}
+
+label[for="showpass"]{
+  margin-left: 5px;
+  width: 100%;
+  cursor: pointer;
+  color: #acacac;
+}
+
+label[for="showpass"]:hover {
+  text-decoration: underline;
+}
+
 #acceptCGU{
   width: min-content;
   margin-right: 10px;
@@ -130,4 +156,23 @@ body {
 
 #alertbox {
   text-align: center;
+}
+
+#reset{
+  text-align: center;
+  cursor: pointer;
+  padding: 20px;
+  color: #acacac;
+  padding-top: 0;
+}
+#reset:hover {
+  text-decoration: underline;
+}
+
+#mypass_new {
+  display: none;
+}
+
+#tips {
+  min-height: 36px;
 }

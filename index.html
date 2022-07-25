@@ -6,6 +6,7 @@
 	<meta charset="UTF-8" name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="shortcut icon" href="logo.png" type="image/x-icon">
 	<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+	<script type="text/javascript" src="https://code.jquery.com/jquery-3.6.0.slim.min.js"></script>
 	<link rel="stylesheet" href="/connect.css">
 </head>
 <body>
@@ -15,10 +16,17 @@
 
 	<div class="login" >
 		<h2>Bienvenue sur Amazon Best Sellers (ABS) <span class="ignore">👋</span></h2>
-		<p>Pour vous connecter, ABS a juste besoin de votre adresse mail.</p>
+		<p id="tips"></p>
+		<div style="text-align: center;">
+			<span class="showpass_container">
+				<input id="showpass" name="showpass" type="checkbox">
+				<label for="showpass"><span id="action">Afficher</span> le mot de passe</label>
+			</span>
+		</div>
 		
-		<input type="email" placeholder="Adresse mail" id="mymail" autocomplete="off"  />
-
+		<input type="email" placeholder="Adresse mail" id="mymail"  />
+		<input type="password" placeholder="Mot de passe" id="mypass"  />
+		<input type="password" placeholder="Confirmer nouveau mot de passe" id="mypass_new" autocomplete="off" style="">
 		<div class="cgu_container">
 			<input type="checkbox" id="acceptCGU" name="acceptCGU">
 			<label class="mandatory" for="acceptCGU">En vous connectant à votre compte, vous acceptez les <a target="_blank" href="/CGU">conditions d'utilisation</a> de la plateforme Amazon Best Sellers.</label>
@@ -26,6 +34,7 @@
 
 		<button type="button" id="connect" disabled/>Se connecter</button>
 		<div id="alertbox"></div>
+		<div id="reset">Mot de passe oublié ?</div>
 
 	</div>
 

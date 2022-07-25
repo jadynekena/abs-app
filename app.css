@@ -563,3 +563,5 @@ iframe{
   border-style: none;
   margin: 20px 0;
 }
+
+select[chosen=''] {color: red;}

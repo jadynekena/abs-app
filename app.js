@@ -1,9 +1,5 @@
 const baseURL = 'https://datastudio.google.com/embed/reporting/87c26c67-28ae-45c3-aaa4-f864248ebb4f/page/'
-var my_departments = user_data('liste_departements')
-var myname =  user_data('nom')
-var mymode = user_data('mode')
-const SEPARATOR = ';'
-var selected_departement = ''
+
 
 
 async function init_spbs(){
@@ -131,7 +127,7 @@ async function user_details_inputs(){
 	enable_level = is_demo() ? ' disabled ' : ''
 	return `<div class="user_details_inputs">
 				<input type="email" value="`+mymail+`" disabled="" autocomplete="off">
-				<select `+enable_level+` name="niveau" id="niveau">
+				<select onchange="this.setAttribute('chosen',this.value); " `+enable_level+` name="niveau" id="niveau">
 					<option value="">Choisissez votre niveau d'abonnement</option>
 					`+await sub_levels()+`
 				</select>
@@ -156,12 +152,9 @@ async function account(firsttime){
 function delete_acc(){
 	if(!is_demo()) return `
 	<div style="margin-top: 20px;">
-	   <details class="urgent" style="padding: 10px;border-radius: 10px;background: #ff000036;cursor: pointer;"><summary>ZONE DE DANGER</summary>
-	  <span class="action" onclick="ask_del_acc()">Supprimer mon compte</span>
-	     
-	  </details>
-	  
-	    
+		<details class="urgent" style="border-radius: 10px;background: #ff000036;cursor: pointer;font-size: 12px;padding: 5px;height: auto;"><summary>ZONE DE DANGER</summary>
+	  		<span class="action" onclick="ask_del_acc()" style="padding: 2px;margin: 10px auto;width: 100px;">Supprimer mon compte</span>
+  		</details>
 	</div>
 	`
 
@@ -179,12 +172,13 @@ function random_code(length){
 }
 
 async function ask_del_acc(){
-	code = random_code(5)
-	if(prompt('Pour supprimer votre compte définitivement, merci de saisir le code suivant : '+code,'') === code){
+	code = random_code(8)
+	code_insert = prompt('⚠️ ATTENTION : cette action est irréversible, et TOUTES vos données seront immédiatement supprimées.\n\nPour supprimer votre compte DEFINITIVEMENT, merci de saisir le code suivant : '+code,'').trim()
+	if(code_insert === code){
 		await supabase.rpc('delete_user')
-		alert('✅ Votre compte a bien été supprimé.\nVos données sont conservées pendant 15 jours, puis seront aussi supprimées.\n Vous allez maintenant être déconnecté.')
+		alert('✅ Votre compte a bien été supprimé.\nVous allez maintenant être déconnecté.')
 		logout()
-	}else{
+	}else if(code_insert.length > 0){
 		alert('❌ Vous n\'avez pas saisi le bon code.')
 	}
 }
@@ -193,10 +187,6 @@ function disable_space(event){
     if(event.which === 32) return false;
 }
 
-
-function show_all(yes){
-	Array.from( document.querySelectorAll('.nav, .whole-body') ).forEach(e => e.style.display = yes ? '' : 'none' )
-}
 
 async function set_clicks(){
 
@@ -354,9 +344,6 @@ function loading_feature(title){
 	return show_popup(true, title, 'Fonctionnalité en cours de construction, merci de votre patience <span class="ignore">🤞</span>', 'Valider', false, false)
 }
 
-function my_selection(){
-	return $('.one_select select:visible').get().map(e => e.value).join(SEPARATOR)
-}
 
 function selected_if_right_item(my_departments,dptmt,index_of_deptmt){
 	return (my_departments && my_departments.split(SEPARATOR)[index_of_deptmt] === dptmt) ? 'selected' : ''
@@ -394,41 +381,6 @@ function hand_shake(){
 
 function welcome(){
 	return 'Bienvenue sur Amazon Best Sellers ' + hand_shake()
-}
-
-async function all_credits(){
-	const supabase_local = createClient(SUPABASE_URL, SUPABASE_KEY);
-	me = await who_is_connected() ; 
-	to_send = {
-		'id_user_value':me,
-	}
-
-	if(is_demo()) to_send['adresse_ip_str'] = await myIP();
-
-
-	let res = await call_function('credits',to_send,true) //this is text "{remain:0, max:0, used:0}"
-
-	return res
-}
-
-function get_element_from_fake_json(fake_json,prop_name){
-	var res = ''
-	var temp = fake_json.split(',').filter(e => e.includes(prop_name)).map(e => e.replace('{','').replace('}',''))
-	if(temp){
-		res = temp[0].split(':')[1]
-	}
-
-	return res
-}
-
-async function user_credits(){
-	
-	var res = await all_credits()
-	var remain = get_element_from_fake_json(res,'remain')
-	var max = get_element_from_fake_json(res,'max')
-	var used = get_element_from_fake_json(res,'used')
-	
-	return {remain:Number(remain),max:Number(max),used:Number(used)}
 }
 
 function disclaimer_credits(firsttime,used,max,remain){
@@ -491,13 +443,6 @@ async function interests(firsttime){
 	if(used >= max) $('.swal2-confirm').remove()
 }
 
-async function enough_credits(){	
-	// if used = max ---> keep disabling confirm button
-	const {used, max, remain} = await user_credits()
-	if(used >= max) return false 
-
-	return true
-}
 
 function always_disable(selector){
 	if(!selector) selector = '.swal2-confirm'
@@ -518,87 +463,6 @@ function change_or_create_popup_contents(opt){
 
 }
 
-function get_name_to_save(){
-	return $('#nom').val() || user_data('nom') || 'Anonyme'
-}
-
-function get_deptmts_to_save(){
-	//console.log({selected_departement})
-	return my_selection() || selected_departement || user_data('liste_departements')
-}
-
-function get_nb_maj_to_save(){
-	return user_data('nb_maj') || 0
-}
-
-async function get_id_niveau_to_save(){
-	return $('#niveau').val() || user_niveau()
-}
-
-async function save_my_datas(lets_show_all,callback, dontsend_local_changes){
-	//console.log({dontsend_local_changes})
-
-	myname = get_name_to_save()
-	my_departments = get_deptmts_to_save()
-	mymode = get_light()
-	nb_maj = get_nb_maj_to_save()
-	id_niveau = await get_id_niveau_to_save()
-
-	my_datas = {
-		nom: myname,
-		liste_departements: my_departments,
-		mode: mymode,
-		id_niveau: id_niveau
-	} 
-
-	if(dontsend_local_changes) delete my_datas['liste_departements']
-
-	show_all(lets_show_all)
-
-	
-	if(user_details() && supabase){
-
-
-		//check current credits
-		//if max achieved : remove departments
-		if(await enough_credits() === false){
-			delete my_datas['liste_departements']
-			//alert('Crédits insuffisants.')
-		}  
-
-		const { user, error } = await supabase.auth.update({ 
-			data: my_datas
-		})
-
-
-	}else{
-
-		window.localStorage.setItem('nom',myname)
-
-
-		//check current credits
-		//if max achieved : no change on departments
-		if(await enough_credits()){
-			window.localStorage.setItem('liste_departements',my_departments)
-		}  
-
-		window.localStorage.setItem('mode',mymode)
-
-		
-	}
-
-	if(callback){
-		eval(callback)	
-	} 
-	
-	hist = await send_my_details(true)
-	//console.log({hist})
-	
-	if(!dontsend_local_changes) update_html_view()
-	
-	return my_datas
-
-}
 
 function iframe_setup(){
 	my_departments = user_data('liste_departements');
