@@ -16,7 +16,7 @@ async function signup(e){
 	if(is_in_recovery_mode){
 
 		//check if old password is there
-		if($('#oldpass').val().length ===0) return set_alert('Merci de fournir votre ancien mot de passe.','red')
+		if($('#oldpass').val().length ===0 && $('#oldpass:visible').length > 0) return set_alert('Merci de fournir votre ancien mot de passe.','red')
 
 		curr_user = await attempt_sigin_with_old_pass()
 		//console.log({curr_user})
@@ -149,7 +149,7 @@ async function attempt_sigin_with_old_pass(){
 	const supabase_temp = createClient(SUPABASE_URL, SUPABASE_KEY)
 	const myinfos = {
 		email: user_mail(),
-		password: $('#oldpass').val()		
+		password: $('#oldpass:visible').length > 0 ?  $('#oldpass').val() : 'noneedpasswordcauseitshidden'
 	}
 	//console.log({myinfos})
 	let { user, error } = await supabase_temp.auth.signIn(myinfos)
@@ -226,8 +226,8 @@ function changing_pass_mode(){
 	return_btn = window.location.href.includes('#access_token') ? "" : '<h5><a href="/discover">...ou revenez à l\'application</a></h5>'
 	$('#welcome').html('<span class="ignore">🔐</span><span id="you"></span> Configurez votre nouveau mot de passe' + return_btn)
 
-	//if NOT from mail, i.e manuel changing ---> ask initially
-	document.querySelector('#oldpass').style.display = 'block'
+	//if NOT from mail, i.e manuel changing ---> ask initially (todo)
+	//document.querySelector('#oldpass').style.display = 'block'
 
 	//UI: hide mail + reset button, display confirm pass, check acceptCGU, hide cgu_container, change button name, change placeholder of mypass
 	document.querySelector('#mymail').style.display = 'none'
