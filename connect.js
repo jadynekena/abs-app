@@ -17,7 +17,7 @@ async function signup(e){
 	if(is_in_recovery_mode){
 
 		curr_user = await attempt_sigin_with_old_pass()
-		console.log({curr_user})
+		//console.log({curr_user})
 
 		//check if user knows his old pass
 		if($('#oldpass:visible').length > 0 ){
@@ -26,10 +26,14 @@ async function signup(e){
 			if(curr_user.error !== null) return set_alert('Impossible de changer votre mot de passe : '+ curr_user.error.message +'.','red')
 		} 
 
+		//check if at least 1 character
+		if(mypass.length === 0) return set_alert('Mot de passe vide.','red')
+
 		//check if pass is strong enough  (todo)
 
 		//check if pass is same
 		if(mypass !== mypass_new) return set_alert('Mots de passe non identiques.','red')
+
 
 		//check if at least 6 characters
 		if(mypass_new.length < 6) return set_alert('Mot de passe trop court.','red')
@@ -145,10 +149,10 @@ async function attempt_sigin_with_old_pass(){
 		email: user_mail(),
 		password: $('#oldpass').val()		
 	}
-	console.log({myinfos})
+	//console.log({myinfos})
 	let { user, error } = await supabase_temp.auth.signIn(myinfos)
 
-	console.log(user, error)
+	//console.log(user, error)
 
 	return {user: user, error: error}
 }
