@@ -12,7 +12,11 @@
 </head>
 <body>
 	<img class="loading" src="/loading.gif" style="width: 50px; display: none;">
-	<div id="helper" class="fixed"><span class="question">❔</span></div>
+	<div id="helper" class="fixed">
+		<span id="edit" class="bottom_icon">✏️</span>
+		<span id="profile" class="bottom_icon">👤</span>
+		<span id="feedback" class="bottom_icon">❔</span>
+	</div>
 
 	<div class="nav">
 		<a href="."><img class="logo" src="/logo.png"></a>
@@ -38,7 +42,7 @@
 			<a id="account"><span class="ignore"> 👤 </span> Mon compte</a>
 			<a id="logout"><span class="ignore">  📴 </span>Déconnexion</a>
 			<span><a class="action ignore" id="download"></a></span>
-			<a id="light" onclick="toggle_light()">
+			<a id="light" onclick="toggle_light()" hidden="">
 				<span class="ignore" >💡</span>
 			</a>
 		</div>

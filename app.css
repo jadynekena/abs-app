@@ -54,8 +54,9 @@ body.swal2-shown > [aria-hidden="true"] {
   filter: blur(10px);
 }
 
-.hidden {
-  visibility: hidden !important;
+.hidden, [hidden=""] {
+  /*visibility: hidden !important;*/
+  display: none !important;
 }
 
 .iframe_wrapper {
@@ -527,8 +528,10 @@ iframe{
 }
 
 #helper {
-  z-index: 999;
+  z-index: 9999;
   right: 0;
+  display: grid;
+  grid-gap: 10px;
 }
 .fixed {
   position: fixed;
@@ -539,17 +542,20 @@ iframe{
   margin: 15px;
   display: flex;
 }
-.question {
-  font-size: 30px;
+.bottom_icon {
+  font-size: 25px;
   -webkit-filter: grayscale(100%);
   cursor: pointer;
-  padding: 5px;
   border-radius: 100px;
-  background-color: #86868670;
+  background-color: #868686;
   opacity: 0.5;
+  width: 55px;
+  height: 55px;
+  line-height: 55px;
+  text-align: center;
 }
 
-.question:hover {
+.bottom_icon:hover {
   opacity: 100%;
   border: 2px black double;
 }

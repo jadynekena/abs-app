@@ -14,7 +14,6 @@ var selected_departement = ''
 async function handle_enter(next_step_if_enter_str){
 	//console.log('\n')
 	//console.log(event.key)
-	//console.log(stuff)
 	if(event.key === "Enter"){
 		eval(next_step_if_enter_str)
 	}else{
@@ -25,7 +24,9 @@ async function handle_enter(next_step_if_enter_str){
 function on_event(eventtype,selector, callback){
 	load_common_scripts_if_needed()
 	$(selector).off(eventtype)
-	$(selector).on(eventtype,function(event){eval(callback)})
+	$(selector).on(eventtype,async function(event){
+	 	eval(callback)
+	})
 
 }
 
@@ -42,7 +43,7 @@ function get_light(){
 function main_common(){
 
 	url_referrer_in_heads() //always send referrer
-	apply_light(user_data('mode'))
+	//apply_light(user_data('mode'))
 	document.addEventListener("DOMContentLoaded", function(){
 		setTimeout(function(){
 			send_my_details()

@@ -40,7 +40,9 @@ function handle_embed(){
 
 
 		if(!is_demo()){
-			if (confirm('Déconnecter votre compte pour être en mode démo ?')) logout(true)	
+			show_all(false)
+			if (confirm('ℹ️ Déconnecter votre compte pour être en mode démo ?\nCliquez sur Annuler pour maintenir votre session.')) logout(true)	
+			show_all(true)
 		} 
 		
 		//if mobile : add margin top
@@ -112,7 +114,8 @@ async function sub_levels(){
 		res  = data.map(e => '<option  '+((is_demo() && e['etiquette_niveau'] === 'FREE') ? ' selected="selected" ' : '')+
 									'   value="'+e['id_niveau']+'">'+e['etiquette_niveau'] + '     |     '
 																  + e['intitule_niveau'] + '     |     '
-																  + e['tarif_mensuel'] + ' € / mois' 
+																  + e['tarif_mensuel'] + ' € / mois'  + '     |     '
+																  + e['nb_max_maj'] + ' crédits' 
 
 							+'</option>' ).join('')
 	}else{
@@ -125,13 +128,14 @@ async function sub_levels(){
 async function user_details_inputs(){
 	mymail = user_mail()
 	enable_level = is_demo() ? ' disabled ' : ''
+	var info = is_demo() ? '' : '<i style="font-size: 11px;">Tous les niveaux sont actuellement gratuits.</i>'
 	return `<div class="user_details_inputs">
 				<input type="email" value="`+mymail+`" disabled="" autocomplete="off">
 				<select chosen="" onchange="this.setAttribute('chosen',this.value); " `+enable_level+` name="niveau" id="niveau">
 					<option value="">Choisissez votre niveau d'abonnement</option>
 					`+await sub_levels()+`
 				</select>
-				<i style="font-size: 11px;">Tous les niveaux sont actuellement gratuits. (Bêta)</i>
+				`+info+`
 				<input type="text" maxlength="15" value="`+user_data('nom')+`" name="nom" id="nom" placeholder="Nom (max 15 caractères)"  autocomplete="off">
 			</div>`
 }
@@ -155,6 +159,7 @@ function delete_acc(){
 	if(!is_demo()) return `
 	<div style="margin-top: 20px;">
 		<details class="urgent" style="border-radius: 10px;background: #ff000036;cursor: pointer;font-size: 12px;padding: 5px;height: auto;"><summary>ZONE DE DANGER</summary>
+			<a href="/?type=recovery"><span class="action" style="padding: 2px;margin: 10px auto;width: 100px;background-color: #00000073;">Changer de mot de passe</span></a>
 	  		<span class="action" onclick="ask_del_acc()" style="padding: 2px;margin: 10px auto;width: 100px;">Supprimer mon compte</span>
   		</details>
 	</div>
@@ -162,6 +167,11 @@ function delete_acc(){
 
 	return ''
 }
+
+function newpass(){
+	window.location.href = "/?type=recovery"
+}
+
 function random_code(length){
 	var result = '';
     var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -175,7 +185,8 @@ function random_code(length){
 
 async function ask_del_acc(){
 	code = random_code(8)
-	code_insert = prompt('⚠️ ATTENTION : cette action est irréversible, et TOUTES vos données seront immédiatement supprimées.\n\nPour supprimer votre compte DEFINITIVEMENT, merci de saisir le code suivant : '+code,'').trim()
+	code_insert = prompt('⚠️ ATTENTION : cette action est irréversible, et TOUTES vos données seront immédiatement supprimées.\n\nPour supprimer votre compte DEFINITIVEMENT, merci de saisir le code suivant : '+code,'')
+	if(code_insert) code_insert = code_insert.trim()
 	if(code_insert === code){
 		await supabase.rpc('delete_user')
 		alert('✅ Votre compte a bien été supprimé.\nVous allez maintenant être déconnecté.')
@@ -193,7 +204,7 @@ function disable_space(event){
 async function set_clicks(){
 
 	on_event('click','#logout','logout()')
-	on_event('click','#helper','helper()')
+	on_event('click','#feedback','feedback()')
 	
 	
 
@@ -216,11 +227,15 @@ async function is_timedout(){
 	return !(await enough_credits())
 }
 
-function helper(){
-	show_popup(true,"Besoin d'aide ?",'<div style="text-align: left;">Si vous avez :'+items_fback()+' Merci de nous détailler votre demande.'+feedback_input()+'</div>','Envoyer',true,false,'send_feedback()' )
+function feedback(){
+	show_popup(true,"Besoin d'aide ?",'<div>Si vous avez :'+items_fback()+' merci de nous détailler votre demande.'+feedback_input()+'</div>','Envoyer',true,false,'send_feedback()' )
 }
 
 function items_fback(){
+	return ' une question, une remarque, une suggestion, un feedback ou autre, '
+}
+
+function items_fback_old(){
 	return `<ul style="text-align: justify;padding-left: 30px;margin: 15px;">
 				<li>une question</li>
 				<li>une remarque</li>
@@ -254,9 +269,9 @@ async function send_feedback(){
 
 function default_clicks(){
 	//console.log('default clicks...')
-	on_event('click','#interests','interests(false)')
+	on_event('click','#interests, #edit','interests(false)')
 
-	on_event('click','#account','account(false)')
+	on_event('click','#account, #profile','account(false)')
 	on_event('click','#keywords','loading_feature(this.innerHTML)')
 	on_event('click','#you','account(false)')
 	on_event('click', '#download','download()')
@@ -315,7 +330,7 @@ function no_download(){
 
 function apply_theme(){
 	if(user_data('mode') && user_data('mode') === 'nuit') {
-		document.querySelector('html').className = "nuit"
+		//document.querySelector('html').className = "nuit"
 	}
 }
 

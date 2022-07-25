@@ -1,5 +1,6 @@
 const TESTING_MODE_SO_STAY_HERE = false;
 const COUNTER_BEGIN = 3
+const TIMER_TO_SHOW_BODY = 500
 
 async function signup(e){
 	e.preventDefault()
@@ -15,6 +16,15 @@ async function signup(e){
 	//recovery mode
 	if(is_in_recovery_mode){
 
+		curr_user = await attempt_sigin_with_old_pass()
+		console.log({curr_user})
+
+		//check if user knows his old pass
+		if($('#oldpass:visible').length > 0 ){
+
+			if(curr_user.user === null) return set_alert('Impossible de changer votre mot de passe : l\'ancien mot de passe est erroné.','red')
+			if(curr_user.error !== null) return set_alert('Impossible de changer votre mot de passe : '+ curr_user.error.message +'.','red')
+		} 
 
 		//check if pass is strong enough  (todo)
 
@@ -31,6 +41,7 @@ async function signup(e){
 			set_alert(msg,'red')
 		}else{
 			loading(true)
+			window.sessionStorage.removeItem('recovery')
 			var counter = COUNTER_BEGIN
 			setInterval(function(a){
 
@@ -128,6 +139,20 @@ async function signup(e){
 	}
 }
 
+async function attempt_sigin_with_old_pass(){
+	const supabase_temp = createClient(SUPABASE_URL, SUPABASE_KEY)
+	const myinfos = {
+		email: user_mail(),
+		password: $('#oldpass').val()		
+	}
+	console.log({myinfos})
+	let { user, error } = await supabase_temp.auth.signIn(myinfos)
+
+	console.log(user, error)
+
+	return {user: user, error: error}
+}
+
 function mode_connect(){
 	var reset_node = document.getElementById('reset')
 	current_mode = reset_node.innerText
@@ -190,6 +215,13 @@ async function update_pass(new_password){
 function changing_pass_mode(){
 	//console.log('changing pass')
 
+	//title is different
+	//if there was NO access token in link ---> with return button
+	return_btn = window.location.href.includes('#access_token') ? "" : '<h5><a href="/discover">...ou revenez à l\'application</a></h5>'
+	$('#welcome').html('<span class="ignore">🔐</span><span id="you"></span> Configurez votre nouveau mot de passe' + return_btn)
+
+	//if NOT from mail, i.e manuel changing ---> ask initially
+	document.querySelector('#oldpass').style.display = 'block'
 
 	//UI: hide mail + reset button, display confirm pass, check acceptCGU, hide cgu_container, change button name, change placeholder of mypass
 	document.querySelector('#mymail').style.display = 'none'
@@ -208,6 +240,7 @@ function changing_pass_mode(){
 
 	//new tips after 1 second
 	setTimeout(function(){
+		$('#you').html(user_data('nom') + '<br/>' )
 		document.querySelector('#tips').innerText = 'Choisissez votre nouveau mot de passe pour ' + user_mail()	
 	}, 100)
 	
@@ -235,9 +268,16 @@ function recovery_mode(){
 	const with_access_token = current_access_token_exists().length > 0
 	//console.log('(recov: ' + recov,',','with_access_token: ' + with_access_token,')')
 
+	let res = false
+	if(recov === false){
+		res = false	
 	//there IS a session
-	const res = there_is_a_session === true && (recov || with_access_token)
-	//console.log({res})
+	}else{
+		res = recov && there_is_a_session === true && with_access_token
+	}
+
+	console.log({res})
+
 
 	return res
 }
@@ -250,7 +290,7 @@ function goto_app(){
 			loading(false)
 			replace_outer_html()
 		}
-	}, 1000)
+	}, TIMER_TO_SHOW_BODY)
 }
 
 async function handle_access_token(){
@@ -372,9 +412,9 @@ function on_mail_change(event){
 }
 
 function switch_show_pass(){
-	const final_type = document.getElementById("mypass").type === "password" ? "text" : "password"
-	document.getElementById("mypass").type = final_type
-	document.getElementById("mypass_new").type = final_type
+	const old_type = document.getElementById("mypass").type
+	const final_type = old_type === "password" ? "text" : "password"
+	$('input[type="'+old_type+'"]').attr('type',final_type)
 
 	document.querySelector('#action').innerText = final_type === 'password' ? 'Afficher' : 'Masquer'
 }
@@ -384,23 +424,29 @@ function delete_all_mail_exists(){
 }
 
 function main(){
+	$('body').hide()
+	loading(true)
 
+	//no mail_exist session storage
+	delete_all_mail_exists()
 
-		//no mail_exist session storage
-		delete_all_mail_exists()
-
-		//events handler : on_event(eventtype,selector, callback)
-		on_event('change','#showpass','switch_show_pass()')
-		on_event('click','#acceptCGU','change_disabled_btn()')
-		on_event('click','#connect','signup(event)')
-		on_event('keyup','input','handle_enter("await signup(event)")')
-		on_event('input','#mymail, #mypass','on_mail_change(event)')
-		on_event('click','#reset','switch_mode()')
+	//events handler : on_event(eventtype,selector, callback)
+	on_event('change','#showpass','switch_show_pass()')
+	on_event('click','#acceptCGU','change_disabled_btn()')
+	on_event('click','#connect','signup(event)')
+	on_event('keyup','input','handle_enter("signup(event)")')
+	on_event('input','#mymail, #mypass','on_mail_change(event)')
+	on_event('click','#reset','switch_mode()')
 
 	//wait 200 ms 
 	setTimeout(function(){
-		handle_access_token()		
+		handle_access_token()	
 	}, 200)
+
+	setTimeout(function(){		
+		$('body').show()
+		loading(false)	
+	}, TIMER_TO_SHOW_BODY+200)
 
 }
 

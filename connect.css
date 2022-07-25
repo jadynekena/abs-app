@@ -168,8 +168,15 @@ label[for="showpass"]:hover {
 #reset:hover {
   text-decoration: underline;
 }
+#you {
+  background: #fbdbb0;
+  padding: 5px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  display: initial;
+}
 
-#mypass_new {
+#mypass_new, #oldpass {
   display: none;
 }
 

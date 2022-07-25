@@ -11,11 +11,11 @@
 </head>
 <body>
 
-	<div style="text-align: end;"><span id="light" class="ignore" onclick="toggle_light()">💡</span></div>
+	<div style="text-align: end;" hidden=""><span id="light" class="ignore" onclick="toggle_light()">💡</span></div>
 	<script type="text/javascript" src="/common.js"></script>
 
 	<div class="login" >
-		<h2>Bienvenue sur Amazon Best Sellers (ABS) <span class="ignore">👋</span></h2>
+		<h2 id="welcome">Bienvenue sur Amazon Best Sellers (ABS) <span class="ignore">👋</span></h2>
 		<p id="tips"></p>
 		<div style="text-align: center;">
 			<span class="showpass_container">
@@ -25,6 +25,7 @@
 		</div>
 		
 		<input type="email" placeholder="Adresse mail" id="mymail"  />
+		<input type="password" placeholder="Ancien mot de passe" id="oldpass"  />
 		<input type="password" placeholder="Mot de passe" id="mypass"  />
 		<input type="password" placeholder="Confirmer nouveau mot de passe" id="mypass_new" autocomplete="off" style="">
 		<div class="cgu_container">
