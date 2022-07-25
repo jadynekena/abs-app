@@ -131,7 +131,7 @@ async function user_details_inputs(){
 					<option value="">Choisissez votre niveau d'abonnement</option>
 					`+await sub_levels()+`
 				</select>
-				<i style="font-size: 11px;">Tous les niveaux vous sont actuellement gratuits. (Bêta)</i>
+				<i style="font-size: 11px;">Tous les niveaux sont actuellement gratuits. (Bêta)</i>
 				<input type="text" maxlength="15" value="`+user_data('nom')+`" name="nom" id="nom" placeholder="Nom (max 15 caractères)"  autocomplete="off">
 			</div>`
 }
