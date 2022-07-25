@@ -358,7 +358,7 @@ function set_current_menu(){
 }
 
 function loading_feature(title){
-	return show_popup(true, title, 'Fonctionnalité en cours de construction, merci de votre patience <span class="ignore">🤞</span>', 'Valider', false, false)
+	return show_popup(true, title, 'Fonctionnalité en cours de construction, merci de votre patience <span class="ignore">🤞</span>', 'Fermer', false, false)
 }
 
 
