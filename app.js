@@ -315,12 +315,12 @@ function apply_popup_position(currentstep){
 	if(currentstep === 0) return false
 	if(!currentstep) currentstep = $('#currentstep').text()
 
-	console.log({currentstep})
+	//console.log({currentstep})
 	const nodes_near_me = selector_spot(currentstep).replace( default_spots() + ', ' , '').replace( default_spots(), '')
 
 	//disable nodes near me
 	$(nodes_near_me).addClass('current_node')
-	console.log({nodes_near_me})
+	//console.log({nodes_near_me})
 	
 	const pos = popup_xy(currentstep, nodes_near_me)
 	$(".swal2-popup").animate({
@@ -388,7 +388,7 @@ function popup_xy(step, nodes_near_me){
 	if(left > (vw - p_width - 50) ) left = (vw - p_width - 50)
 
 
-	console.log({top},{left})
+	//console.log({top},{left})
 	res = [top,left]
 	return res;
 }
