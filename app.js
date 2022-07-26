@@ -260,6 +260,8 @@ function visit_btn(){
 //show_popup(with_animation, title, html, btn_name, with_cancel, fullscreen, next_steps)
 function visit(number){
 
+	
+
 	//top always 0
 	document.body.scrollTop = 0; // For Safari
   	document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
@@ -269,9 +271,15 @@ function visit(number){
 	const next_step_callback = 'visit('+next_step_number+')'
 	const with_cancel = (number%MAX_STEPS === 0) ? false : true
 
+	console.log({number},{MAX_STEPS})
+
+
+
 	//show only if needed
 	if(number <= MAX_STEPS){
 		if(number>0) activate_visit_mode(true) //no body blur + no body darken + transparent popup 
+		if(number === MAX_STEPS) activate_visit_mode(false)
+
 		show_popup(!with_cancel,visit_title(number),visit_html(number),btn_name,with_cancel,false, next_step_callback,true)	
 
 		//manual drag
@@ -807,7 +815,6 @@ function activate_visit_mode(yes){
 		$('body').removeAttr('visit_mode')
 		$('body, body *').removeClass('current_node')
 		$('body, body *').removeClass('spot').removeClass('blocked')
-
 	}
 }
 

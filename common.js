@@ -397,6 +397,7 @@ function load_common_scripts_if_needed(callback){
 	links_src = [] //default already ok with 'https://code.jquery.com/jquery-3.6.0.slim.min.js'
 
 	if(currently_local_host()) links_src.push('/live.js')
+	if(portrait()) links_src.push('https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js')
 
 	for (const link of links_src){
 
