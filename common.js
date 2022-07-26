@@ -1,14 +1,21 @@
-const SUPABASE_URL = "https://ojfpzzbgxyrtwmqolqwa.supabase.co"
-const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9qZnB6emJneHlydHdtcW9scXdhIiwicm9sZSI6ImFub24iLCJpYXQiOjE2NTc1MTU2OTMsImV4cCI6MTk3MzA5MTY5M30.Cw-t8RhhDHs0vKA6Q-zpQRL5JrX9vMX5g9oThszCEC4'
+const SUPABASE_URL = decode_str(get_content_sync('SUPABASE_URL.txt'))
+const SUPABASE_KEY = decode_str(get_content_sync('SUPABASE_APIKEY.txt'))
+console.log({SUPABASE_URL})
+console.log({SUPABASE_KEY})
+
+const TIMER_TO_SHOW_BODY = 500
+const SEPARATOR = ';'
+var selected_departement = ''
+
+
 const { createClient } = supabase
 var supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
-const SEPARATOR = ';';
-const TIMER_TO_SHOW_BODY = 500;
 
 var my_departments = user_data('liste_departements')
 var myname =  user_data('nom')
 var mymode = user_data('mode')
-var selected_departement = ''
+
+
 
 
 
@@ -136,14 +143,21 @@ async function get_content(url,sync_mode){
 			return txt
 		})
 	}else{
+		return get_content_sync(url)
+	}
+}
+
+function get_content_sync(url){
 		const request = new XMLHttpRequest();
 		request.open('GET', url, false);  // `false` makes the request synchronous
 		request.send(null);
 
 		if (request.status === 200) {
 			return request.responseText
+		}else{
+			return request
 		}
-	}
+
 }
 
 async function post_content(URL, content){
@@ -576,4 +590,36 @@ function size_of_variable( object ) {
         }
     }
     return bytes;
+}
+
+function decode_str(encoded){
+	return local_decoder(encoded)
+}
+
+function local_decoder(encoded){
+	return encode_str(encoded,(-1)*1)
+}
+
+function encode_str(plain,localencoder){
+	//console.log('\n\n',{plain})
+	var res = ''
+
+	for (i = 0 ; i < plain.length ; i++) {
+		//console.log('\n')
+		
+		s = plain.charAt(i)
+		//console.log({s})
+		
+		curr_char_code = s.charCodeAt()
+		//console.log({curr_char_code})
+		
+		next_char_code = curr_char_code + (localencoder ? localencoder : 1)
+		//console.log({next_char_code})
+		
+		replacer = String.fromCharCode(next_char_code)
+		//console.log({replacer})
+		res += replacer
+	}
+	//console.log({res})
+	return res;
 }

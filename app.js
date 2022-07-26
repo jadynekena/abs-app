@@ -334,7 +334,7 @@ function apply_popup_position(currentstep){
 	$(".swal2-popup").animate({
 		top:pos[0],
 		left:pos[1]
-	}, 200);
+	}, 0);
 }
 
 
@@ -353,7 +353,7 @@ function popup_xy(step, nodes_near_me){
 	const top =  (window.innerHeight - p_height)/2
 	const left = (window.innerWidth - p_width)/2
 	*/
-	console.log({step},{MAX_STEPS})
+	//console.log({step},{MAX_STEPS})
 	if(step === MAX_STEPS) {
 		return [0,0]
 	}

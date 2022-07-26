@@ -3,3 +3,4 @@ _site
 db
 .jekyll-metadata
 notes
+.*
