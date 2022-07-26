@@ -134,7 +134,7 @@ iframe {
   outline: 10px #ff00003d solid;
   filter: none !important;
   outline-offset: 1px;
-  animation: focusing 2s infinite;
+  animation: focusing 1.5s infinite;
   z-index: 9999999999;
   position: relative;
   cursor: pointer !important;
@@ -155,7 +155,7 @@ iframe {
 
 @keyframes focusing {
   50% {
-    outline-offset: 75px;
+    outline-offset: 50px;
   }
 }
 
@@ -602,29 +602,13 @@ iframe{
   position: relative;
 }
 
-.sub-tabs-container label:active {
+.sub-tabs-container label:hover {
   color: #37474f;
   box-shadow: 2px 1px 1px rgba(0, 0, 0, 0.3);
 }
 
-.sub-tabs-container label:first-child {
-  background-color: #cddc39;
-}
-
-.sub-tabs-container label:nth-child(2) {
-  background-color: #00dbff;
-}
-
-.sub-tabs-container label:hover {
-  background-color: #ffccbc;
-}
-
-.sub-tabs-container label:first-child:hover {
-  background-color: #e6ee9c;
-}
-
-.sub-tabs-container label:nth-child(2):hover {
-  background-color: #a9f3ff;
+.sub-tabs-container label {
+  background-color: white;
 }
 
 .selected_sub_tab { 
