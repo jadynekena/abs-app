@@ -21,7 +21,9 @@ async function handle_enter(next_step_if_enter_str){
 
 	}
 }
-
+function portrait(){
+	return window.innerWidth <= window.innerHeight
+}
 function on_event(eventtype,selector, callback){
 	load_common_scripts_if_needed()
 	$(selector).off(eventtype)

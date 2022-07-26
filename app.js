@@ -1,4 +1,5 @@
 const baseURL = 'https://datastudio.google.com/embed/reporting/87c26c67-28ae-45c3-aaa4-f864248ebb4f/page/'
+const MAX_STEPS = (inIframe() || is_demo()) ? 5 : 6
 
 
 
@@ -24,6 +25,7 @@ function main(){
 	first_arrival_handler()
 
 	document.querySelector('.nav-links').addEventListener('click', hide_navbar_after_click_on_phone)
+	//visit(0)
 }
 
 function show_logo(){
@@ -60,10 +62,27 @@ function isMobileDevice(){
 }
 
 function first_arrival_handler(){
-	first_connection = myname.trim().length === 0 || my_departments.trim().length < 3
+
+	//no name required at the beginning of demo
+	in_iframe_or_demo = (inIframe() || is_demo())
+
+	first_connection = in_iframe_or_demo ? (my_departments.trim().length < 3) : (myname.trim().length === 0 || my_departments.trim().length < 3)
+	if(in_iframe_or_demo) $('html').attr('embedded',true)
+
 	if(first_connection){
 		show_all(false)
-		account(true)
+
+		//normal
+		if(!in_iframe_or_demo){
+			account(true)	
+
+		//embedded or demo mode
+		}else{
+
+			update_username_locally();
+			interests(true)
+		}
+		
 	}else {
 		update_html_view()
 		iframe_setup()
@@ -157,11 +176,11 @@ async function account(firsttime){
 
 }
 
-function delete_acc(){
+function delete_acc(blocked){
 	if(!is_demo()) return `
-	<div style="margin-top: 20px;">
-		<details class="urgent" style="border-radius: 10px;background: #ff000036;cursor: pointer;font-size: 12px;padding: 5px;height: auto;"><summary>ZONE DE DANGER</summary>
-			<a href="/?type=recovery"><span class="action" style="padding: 2px;margin: 10px auto;width: 100px;background-color: #00000073;">Changer de mot de passe</span></a>
+	<div class="${blocked ? 'blocked' : ''}" style="margin-top: 20px;">
+		<details ${blocked ? 'open=""' : ''} class="urgent" style="border-radius: 10px;background: #ff000036;cursor: pointer;font-size: 12px;padding: 5px;height: auto;"><summary>ZONE DE DANGER</summary>
+			<a target="_blank" href="/?type=recovery"><span class="action" style="padding: 2px;margin: 10px auto;width: 100px;background-color: #00000073;">Changer de mot de passe</span></a>
 	  		<span class="action" onclick="ask_del_acc()" style="padding: 2px;margin: 10px auto;width: 100px;">Supprimer mon compte</span>
   		</details>
 	</div>
@@ -230,7 +249,236 @@ async function is_timedout(){
 }
 
 function feedback(){
-	show_popup(true,"Besoin d'aide ?",'<div>Si vous avez :'+items_fback()+' merci de nous détailler votre demande.'+feedback_input()+'</div>','Envoyer',true,false,'send_feedback()' )
+	show_popup(true,"Besoin d'aide ?",'<div>'+visit_btn() + contact()+'</div>','Valider',true,false,'send_feedback()' )
+}
+
+//first time
+function visit_btn(){
+	return `<span onclick="visit(0)"><a class="action ignore" id="visit">Visite guidée</a></span>`
+}
+
+//show_popup(with_animation, title, html, btn_name, with_cancel, fullscreen, next_steps)
+function visit(number){
+
+	//top always 0
+	document.body.scrollTop = 0; // For Safari
+  	document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
+
+	const btn_name = visit_btn_name(number, MAX_STEPS)
+	const next_step_number = number + 1
+	const next_step_callback = 'visit('+next_step_number+')'
+	const with_cancel = (number%MAX_STEPS === 0) ? false : true
+
+	//show only if needed
+	if(number <= MAX_STEPS){
+		if(number>0) activate_visit_mode(true) //no body blur + no body darken + transparent popup 
+		show_popup(!with_cancel,visit_title(number),visit_html(number),btn_name,with_cancel,false, next_step_callback,true)	
+
+		//manual drag
+		$('.swal2-popup').draggable();
+
+		//highlight relevant elements 
+		$('body *').removeClass('spot')
+		spotselector = selector_spot(number)
+		$(spotselector).addClass('spot')
+
+		//downlight non relevant elements
+		$('body *').removeClass('blocked')
+		$('body *:not(.spot)').addClass('blocked')
+
+		//popup position + node focus
+		$('body *').removeClass('current_node')
+		apply_popup_position(number)
+
+		window.onresize = function(){
+		  doit = setTimeout(function(){apply_popup_position(number)}, 100);
+			
+		};
+
+		//optional function to call (todo) 
+		if($('.current_node')[0]){
+			if($('.current_node')[0].id === 'download'){
+				$('#nav-check')[0].checked = true
+			} else{
+				$('#nav-check')[0].checked = false
+			}					
+		}
+
+
+
+	}else{
+		activate_visit_mode(false)
+	}
+}
+
+function apply_popup_position(currentstep){
+	if(currentstep === 0) return false
+	if(!currentstep) currentstep = $('#currentstep').text()
+
+	console.log({currentstep})
+	const nodes_near_me = selector_spot(currentstep).replace( default_spots() + ', ' , '').replace( default_spots(), '')
+
+	//disable nodes near me
+	$(nodes_near_me).addClass('current_node')
+	console.log({nodes_near_me})
+	
+	const pos = popup_xy(currentstep, nodes_near_me)
+	$(".swal2-popup").animate({
+		top:pos[0],
+		left:pos[1]
+	}, 200);
+}
+
+
+//use $('.swal2-popup')[0].offsetTop + ' ' + $('.swal2-popup')[0].offsetLeft
+//use window.innerWidth + '        ' + $('.swal2-popup')[0].offsetLeft
+function popup_xy(step, nodes_near_me){
+		
+	const p_width = $('.swal2-popup')[0].offsetWidth
+	const p_height = $('.swal2-popup')[0].offsetHeight
+
+	const vh = window.innerHeight
+	const vw = window.innerWidth
+
+	//default positions
+	/*
+	const top =  (window.innerHeight - p_height)/2
+	const left = (window.innerWidth - p_width)/2
+	*/
+
+	if(step === MAX_STEPS) return [(window.innerHeight - p_height)/2, (window.innerWidth - p_width)/2]
+
+	var top = step === 1 ? 567 : 
+			step === 2 ? 251 : 
+			step === 3 ? 128 : 
+			step === 4 ? 74 : 
+			step === 5 ? 60 : 
+			(vh - p_height)/2
+ 
+ 	//if PORTRAIT : use this :
+
+	//todo : refaire left = width - right  ----> right =  width - left  ---> RAPPORT DE RIGHT AVEC VW
+	if(portrait()){
+
+		var left = step === 1 ? (0.41*vw) : //1307      775     ---> right = 532   ---> 41%
+			step === 2 ? (0.68*vw) : //1307        414 ---> right = 893 ---> 68%
+			step === 3 ? (0.56*vw) : //1307        570 ---> right = 737 ---> 54%
+			step === 4 ? (0.92*vw) :  //1307        67 ---> right = 1238 --->  92%
+			step === 5 ? (0.49*vw) : //1307        664  ---> right = 643 ---> 49%
+			(vw - p_width)/2  
+
+	//if NOT PORTRAIT, use this :
+	}else{
+
+		var left = step === 1 ? (775) : //1307      775     ---> right = 532   ---> 41%
+			step === 2 ? (vw-893) : //1307        414 ---> right = 893 ---> 68%
+			step === 3 ? (vw-737) : //1307        570 ---> right = 737 ---> 54%
+			step === 4 ? (vw-1241) :  //1307        67 ---> right = 1241 --->  95%
+			step === 5 ? (vw-643) : //1307        664  ---> right = 643 ---> 49%
+			(vw - p_width)/2  
+	}
+	
+
+	//top : min = 0, max = (1vh - popup height)
+	if(top < 0) top = 0
+	if(top > (vh - p_height) ) top = (vh - p_height)
+
+	//left : min = 0, max = (1w - popup width - 50)
+	if(left < 0) left = 0
+	if(left > (vw - p_width - 50) ) left = (vw - p_width - 50)
+
+
+	console.log({top},{left})
+	res = [top,left]
+	return res;
+}
+
+function default_spots(){
+	return 'body, .swal2-container, .swal2-container * '
+}
+
+function selector_spot(step){
+	res = default_spots()
+	additional = step === 1 ? '#interests, #edit' :
+		   step === 2 ? '.sub-tabs-container' :
+		   step === 3 ? '#download' :
+		   step === 4 ? '#you' :
+		   step === 5 ? '#account' :
+		   step === 6 ? '' :
+		   ''
+  	res = res + (additional ? ', ' + additional : '')
+   return res 
+
+}
+
+function visit_btn_name(step){
+	/*
+	console.log('bouton : ')
+	console.log({step})
+	console.log({MAX_STEPS})
+	*/
+	return step === 0 ? 'Commencer' :
+			step === MAX_STEPS ? 'Terminer' :
+			'Suivant'
+}
+
+function visit_title(step){
+	res = ''
+
+	previous_step = step - 1
+	if (previous_step > 0) res += '<span onclick="visit('+previous_step+')">← </span>'
+
+	res += (step < MAX_STEPS) ? `<span>${step}/${MAX_STEPS-1}</span><br/>` : '<span class="ignore">☑️</span><br/>'
+
+	//progress bar
+	res += `<progress value="${step}" max="${MAX_STEPS-1}"></progress><div class="litle_title">`
+
+	title_text = step === 0 ? 'Visite guidée' :
+			step === MAX_STEPS ? 'Visite terminée' :
+			step === 1 ? 'Edition des intérêts' :
+			step === 2 ? 'Choix des données à afficher' :
+			step === 3 ? 'Télécharger les données du jour' :
+			step === 4 ? 'Modifier votre nom' :
+			step === 5 ? 'Modifier votre mot de passe' :
+			''
+
+	res += '<span">' + title_text + '</span>'
+	res += '</div>'
+
+
+	
+
+	return res
+}
+
+function visit_html(step){
+	return step === 0 ? `Nous allons vous familiariser avec la plateforme en <strong>seulement ${MAX_STEPS-1} étapes</strong>.<br/>Vous pouvez revenir à ce tutoriel à tout moment.<br/>` :
+		   step === MAX_STEPS ? 'Et voilà ! Vous savez maintenant utiliser la plateforme ABS.' :
+		   step === 1 ? `La première étape consite à choisir vos 3 départements d'intérêts, qui seront modifiables plus tard grâce à cet icône. Vous avez le choix parmi <strong>une trentaine d'options</strong> !` :
+		   step === 2 ? `Les onglets vous aident à choisir les données graphiques à afficher.` :
+		   step === 3 ? `Le bouton <strong>Télécharger</strong> en haut à droite de l'écran vous permet de récupérer le fichier CSV du jour.<br/> Cette option n'est disponible que <strong>en mode connecté.</strong>` :
+		   step === 4 ? phrase_nom() + ` Vous pouvez le modifier en cliquant directement dessus, ou en cliquant sur l'icône <span class="ignore">👤</span>.` :
+		   step === 5 ? `Votre mot de passe peut être modifié en allant dans Mon compte → ZONE DE DANGER → Changer de mot de passe : <br/>` + delete_acc(true) :
+		   ''
+}
+
+function phrase_nom(){
+	if(is_demo() || user_data('nom') === 'Anonyme' || user_data('nom') === undefined || user_data('nom') === null){
+		return 'Par défaut, si vous ne donnez pas un nom à votre compte, vous serez nommé <strong>Anonyme</strong>.'
+	}else{
+		return `Vous avez déjà configuré votre nom en <strong>${user_data('nom')}</strong>, et c\'est très bien !`
+	}
+}
+
+function contact(){
+	return `
+		<details>
+			<summary class="subtitle action ignore">Nous contacter</summary>
+			<div class="contact">
+				Si vous avez : ${items_fback()} merci de nous détailler votre demande.${feedback_input()}
+			</div>
+		</details>
+	`
 }
 
 function items_fback(){
@@ -252,6 +500,7 @@ function feedback_input(){
 }
 
 async function send_feedback(){
+	if($('details[open]').length === 0) return false
 	const supabase_local = createClient(SUPABASE_URL,SUPABASE_KEY)
 	const myfeedback = $('#myfeedback').val().trim()
 
@@ -389,18 +638,18 @@ async function choice_departments(){
 	const {data, error} = await supabase_local.from('liste_tout_departements').select('*')
 	
 	const opt = (data || []).map((e,i) => '<option value="'+e['id_departement']+'">'+e['Departement']+'</option>')
-	return '<div class="select_container centered">' + new Array(3).fill(`<div class="one_select centered"><label for="listID">Département n°INDEX_DPTMT</label><select default="value_selected" id="listID">`+opt+`</select></div>`)
+	return '<div class="select_container centered">' + new Array(3).fill(`<div class="one_select centered"><label for="listID">Département n°INDEX_DPTMT</label><select onchange="this.setAttribute('default', this.value)" default="value_selected" id="listID">`+opt+`</select></div>`)
 														  .map((e,i) => e.replaceAll('listID','departement'+i).replaceAll('INDEX_DPTMT',(i+1)).replaceAll('value_selected',value_selected(i))   )
 														  .join(' ')
 		  + '</div>'
 }
 
-function hand_shake(){
+function hand_wave(){
 	return '<span class="ignore">👋</span>'
 }
 
 function welcome(){
-	return 'Bienvenue sur Amazon Best Sellers ' + hand_shake()
+	return 'Bienvenue sur Amazon Best Sellers ' + hand_wave()
 }
 
 function disclaimer_credits(firsttime,used,max,remain){
@@ -410,7 +659,7 @@ function disclaimer_credits(firsttime,used,max,remain){
 			'' +
 
 			`
-			<progress style="width: 200px;" value="`+used+`" max="`+max+`"></progress><br/>
+			<progress value="`+used+`" max="`+max+`"></progress><br/>
 			<p>Vous avez utilisé <a><strong>`+used+`</strong>/<strong>`+max+`</strong></a> de vos crédits.</p>
 			`)
 		
@@ -443,7 +692,7 @@ async function interests(firsttime){
 	disclaimer = disclaimer_credits(firsttime,used,max,remain)
 	content = '<p>'+(firsttime ? 'Pour commencer, c' : 'C')+'hoisissez vos 3 départements d\'intérêt.</p>' + all_deptmts + disclaimer 
 	next_steps = save_and_run()
-	btn_name = firsttime ? 'Suivant' : 'Enregistrer'
+	btn_name = firsttime ? '<span class="ignore"> 🪄 </span> Voir les données' : 'Enregistrer'
 	with_cancel = firsttime ? false : true
 
 	opt = {
@@ -461,8 +710,14 @@ async function interests(firsttime){
 
 	//no saving
 	if(used >= max) $('.swal2-confirm').remove()
+
 }
 
+function visit_right_after(firsttime){	
+	//wait a little
+	console.log('waiting a little...')
+	if(firsttime) setTimeout(function(){visit(0)}, 2000)
+}
 
 function always_disable(selector){
 	if(!selector) selector = '.swal2-confirm'
@@ -478,7 +733,7 @@ function change_or_create_popup_contents(opt){
 		pop.querySelector('button').innerHTML = opt['btn_name']
 
 	}else{
-		show_popup(!opt['firsttime'],opt['title'],opt['content'],opt['btn_name'],opt['with_cancel'],opt['fullscreen'],opt['next_steps'])
+		show_popup(!opt['firsttime'],opt['title'],opt['content'],opt['btn_name'],opt['with_cancel'],opt['fullscreen'],opt['next_steps']).then(() => visit_right_after(opt['firsttime']))
 	}
 
 }
@@ -494,16 +749,19 @@ function logo(){
 	return inIframe() ? "" : `<img src="/final-logo.png" alt="Amazon Best Sellers" class="local-logo">`
 }
 
-async function show_popup(with_animation,title,html,btn_name,with_cancel,fullscreen,next_steps){
+async function show_popup(with_animation,title,html,btn_name,with_cancel,fullscreen,next_steps,no_escape_please,default_positions_x_y){
 	hasAlertOpened = false;
 
 	if (this.hasAlertOpened) {
 		return;
 	}
+	//console.log({no_escape_please})
+	const escapable = no_escape_please ? false : with_cancel
+	//console.log({escapable})
 
-	return await Swal.fire({
+	const opt = {
 		animation: with_animation,
-		title: logo() +'<h1>' +  title + '</h1>',
+		title: logo() +'<h1 class="atitle">' +  title + '</h1>',
 		html: '<div class="wrapper">'+html+'</div>',
 		focusConfirm: false,
 		confirmButtonText:  btn_name,
@@ -511,23 +769,51 @@ async function show_popup(with_animation,title,html,btn_name,with_cancel,fullscr
 		confirmButtonColor: '#f70',
 		cancelButtonColor: '#9f9f9f',
 		customClass: fullscreen ? 'swal-wide' : '',
-		allowOutsideClick: with_cancel,
-		allowEscapeKey: with_cancel,
-		showCloseButton: with_cancel,
+		allowOutsideClick: escapable,
+		allowEscapeKey: escapable,
+		showCloseButton: escapable,
 		showCancelButton: with_cancel,
 		allowEnterKey: true,
 		focusConfirm: true
-	}).then(function(result_swal){
-		//console.log(result_swal)
-		if(result_swal['isConfirmed'] && next_steps) eval(next_steps)
+	}
+
+	if(!with_animation){
+		  opt['showClass']= {
+		    backdrop: 'swal2-noanimation', // disable backdrop animation
+		    popup: '',                     // disable popup animation
+		    icon: ''                       // disable icon animation
+		  }
+		  opt['hideClass'] = {
+		    popup: '',                     // disable popup fade-out animation
+		  }
+	}
+
+	return await Swal.fire(opt).then(function(result_swal){
+
+		if(result_swal['isConfirmed'] && next_steps){
+			eval(next_steps)	
+		} else{
+			activate_visit_mode(false)
+		}
+		
 		
 	})
 }
 
+function activate_visit_mode(yes){
+	if(yes){
+		$('body').attr('visit_mode',true)
+	}else{
+		$('body').removeAttr('visit_mode')
+		$('body, body *').removeClass('current_node')
+		$('body, body *').removeClass('spot').removeClass('blocked')
+
+	}
+}
+
 function set_iframe(dptmts,forcing){
 
-	//console.log({dptmts})
-	//console.log({forcing})
+	loading(true)
 
 	const list_of_iframes_id = ['kpi','raw_datas']
 	const pages_id = ['p_zjlh8301wc', 'p_im617hlswc']
@@ -566,17 +852,17 @@ function set_iframe(dptmts,forcing){
 		}
 
 
-	}, 10)
+	}, 200)
 
 	return true
 }
 
 function current_visible_iframe_id(){
-
 	return $('iframe:visible')[0] ? $('iframe:visible')[0].id : 'no-frame-detected'
 }
 
 function assign_iframe_url(src_of_change,iframe_id,forcing){
+	//console.log({iframe_id})
 	//console.log({src_of_change})
 	if(src_of_change){
 		$('label').removeClass('selected_sub_tab')

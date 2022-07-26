@@ -1,7 +1,6 @@
 html {
   visibility: hidde; /*show ONLY IF auth or DEMO, especially for embedded*/ 
 }
-
 *, a {
 	font-family: Arial;
 	font-size: inherit;
@@ -10,13 +9,21 @@ html {
 	margin: 0;
 	box-sizing: border-box;
 }
-*, *:hover {
-    /*transition: all 0.3s ease-in;*/
+
+[embedded] .nav-links > a, [embedded] #profile {
+  display: none !important;
 }
+
 h1 {
   padding: 0 10px;
   margin-top: 50px;
 }
+
+.atitle {
+  display:inline;
+  padding: 0;
+}
+
 .nuit { filter: invert(1) hue-rotate(180deg) ; }
 .nuit .ignore  { filter: invert(1) hue-rotate(180deg) ; }
 
@@ -49,9 +56,139 @@ body{
 	text-align: center;
 }
 
+progress {
+  /*
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  */
+  height: 15px;
+  width: 200px;
+  margin-bottom: 20px;
+  color: red;
+}
+
+
+body.swal2-shown:not([visit_mode="true"]) > [aria-hidden="true"] {
+  transition: 0.1s filter;
+  filter: blur(10px);
+}
+
+[visit_mode="true"] .wrapper{
+  background-color: white !important;
+}
+
+iframe {
+  transition: 0.1s display;  
+}
+
+.blocked {
+    position:relative;
+    cursor: not-allowed;
+}
+.blocked:after {
+    content: '';
+    position: absolute;
+    left:0;
+    right:0;
+    top:0;
+    bottom:0;
+    z-index:1;
+    background: transparent;
+}
+
+[visit_mode="true"] *:not(.spot){
+  cursor: not-allowed;
+
+}
+
+[visit_mode="true"] .spot {
+  cursor: pointer;
+}
+
+[visit_mode="true"] .swal2-container{
+  background: none !important;
+  cursor:  not-allowed;
+}
+
+[visit_mode="true"] .swal2-popup{
+  padding: 10px !important;
+  background-color: #cacacab3 !important;
+  cursor: grab;
+  position: fixed;
+  height: auto;
+  width: calc(200px + 20%);
+}
+
+[visit_mode="true"] .swal2-actions, [visit_mode="true"] .swal2-html-container{  
+  margin: 0;
+}
+
+/*what's NOT focused*/
+[visit_mode="true"] *:not(.current_node:nth-child(1)):not(.spot:nth-child(1)){
+  
+}
+
+.current_node {
+  opacity: 100% !important;
+  outline: 10px #ff00003d solid;
+  filter: none !important;
+  outline-offset: 1px;
+  animation: focusing 2s infinite;
+  z-index: 55555;
+  position: relative;
+  cursor: pointer !important;
+}
+
+@keyframes focusing {
+  50% {
+    outline-offset: 100px;
+  }
+}
+
+.back {
+  width: 100%;
+  font-size: 14px;
+  margin-bottom: 25px;
+  text-align: center;
+}
+
+.back > * {
+  border: 3px solid;
+  border-radius: 10px;
+  padding: 5px;
+  display: inline;
+  color: #ff770078;
+  background-color: #f0f0f0;
+}
+
+.back > *:hover {
+  background-color: white;
+}
+ 
 body.swal2-shown > [aria-hidden="true"] {
   transition: 0.1s filter;
   filter: blur(10px);
+}
+
+body[visit_mode="true"].swal2-shown > [aria-hidden="true"] {
+  transition: 0s filter;
+  filter: none !important;
+}
+
+[visit_mode="true"] *:not(.current_node):not(.swal2-popup) {
+  /*transition: 0.1s filter;*/
+  /*filter: blur(10px);  */
+}
+
+.litle_title {
+  background: white;
+  margin-bottom: 20px;
+  border-radius: 10px;
+}
+
+details {
+  cursor: pointer;
 }
 
 .hidden, [hidden=""] {
@@ -68,7 +205,6 @@ body.swal2-shown > [aria-hidden="true"] {
 iframe{
 	border: 0;
 	max-width: 800px;
-	/*border-radius: 20px;*/
 }
 
 .one_select {
@@ -192,6 +328,7 @@ iframe{
 .nav > .nav-links > * {
   display: inline-block;
   padding: 20px;
+  border-radius: 10px;
 }
 
 .nav > .nav-links > *:hover {
@@ -203,7 +340,7 @@ iframe{
   display: none;
 }
 
-@media (max-width:1050px) {
+@media (orientation: portrait) {
   .nav-title {
     display: block !important;
   }
@@ -353,7 +490,7 @@ iframe{
 }
 
 
-@media (max-width:850px) {
+@media (orientation: portrait) {
   
   .whole-body {
 
@@ -386,14 +523,6 @@ iframe{
 .urgent {
   color: red;
   font-style: bold;
-}
-
-@keyframes shake {
- 0% { transform: translateX(0) }
- 25% { transform: translateX(5px) }
- 50% { transform: translateX(-5px) }
- 75% { transform: translateX(5px) }
- 100% { transform: translateX(0) }
 }
 
 /* Main Tabs */
@@ -440,8 +569,10 @@ iframe{
 
 /* Sub-tabs */
 .sub-tabs-container {
-  margin: 20px;
+  padding: 20px;
   display: ruby-text;
+  height: auto;
+  border-radius: 10px;
 }
 .sub-tabs-container label {
   color: #030700;
@@ -570,4 +701,18 @@ iframe{
   margin: 20px 0;
 }
 
-select[chosen=''] {color: red;}
+.contact {
+  padding: 10px;
+  border: 0;
+  border-radius: 10px;
+  background-color: #ffffff4f;
+}
+.subtitle {
+  padding: 5px;
+  margin-top: 25px;
+}
+
+select[chosen=''], select[default=""] {
+  outline: none !important;
+  border: 2px solid red;
+}
