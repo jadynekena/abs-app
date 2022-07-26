@@ -353,8 +353,10 @@ function popup_xy(step, nodes_near_me){
 	const top =  (window.innerHeight - p_height)/2
 	const left = (window.innerWidth - p_width)/2
 	*/
-
-	if(step === MAX_STEPS) return [(window.innerHeight - p_height)/2, (window.innerWidth - p_width)/2]
+	//console.log({step},{MAX_STEPS})
+	if(step === MAX_STEPS) {
+		return [0,0]
+	}
 
 	var top = step === 1 ? 567 : 
 			step === 2 ? 251 : 
@@ -812,6 +814,7 @@ function activate_visit_mode(yes){
 	if(yes){
 		$('body').attr('visit_mode',true)
 	}else{
+		if($('.swal2-popup')[0]) $('.swal2-popup')[0].style = ''
 		$('body').removeAttr('visit_mode')
 		$('body, body *').removeClass('current_node')
 		$('body, body *').removeClass('spot').removeClass('blocked')
