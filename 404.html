@@ -10,13 +10,13 @@
 	<script type="text/javascript" src="https://releases.jquery.com/git/jquery-git.min.js"></script>  
 	<script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js" integrity="sha256-lSjKY0/srUM9BE3dPm+c4fBo1dky2v27Gdjm2uoZaL0=" crossorigin="anonymous"></script>
 
+	<!--<script src="/archive/common.js"></script>-->
 	<script type="text/javascript" src="/common.min.js"></script>
 </head>
 <body>
 	<img class="loading" src="/loading.gif" style="width: 50px; display: none;">
 	<div id="helper" class="fixed">
 		<span id="edit" class="bottom_icon">📌</span>
-		<span id="profile" class="bottom_icon">👤</span>
 		<span id="feedback" class="bottom_icon">❔</span>
 	</div>
 
@@ -44,7 +44,7 @@
 			<a id="account"><span class="ignore"> 👤 </span> Mon compte</a>
 			<a id="logout"><span class="ignore">  📴 </span>Déconnexion</a>
 			<span><a class="action ignore" id="download"></a></span>
-			<a id="light" onclick="toggle_light()" hidden="">
+			<a id="light" onclick="toggle_light()">
 				<span class="ignore" >💡</span>
 			</a>
 		</div>
@@ -84,7 +84,7 @@
 	  <div class="tab-content">
 	    <div class="sub-tabs-container">
 	      <label for="sub-tab-1" class="selected_sub_tab">Chiffres clés</label>
-	      <label for="sub-tab-2">Données brutes</label>
+	      <label for="sub-tab-2" class="">Données brutes</label>
 	    </div>
 	    <!-- Chiffres clés -->
 	    <input class="tab-radio" id="sub-tab-1" name="sub-group" type="radio" checked="checked">
@@ -174,7 +174,7 @@
 
 </section>
 
-
+<!--<script src="/archive/app.js"></script>-->
 <script src="/app.min.js"></script>
 
 </body>
