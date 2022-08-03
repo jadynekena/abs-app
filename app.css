@@ -223,6 +223,10 @@ iframe{
 	max-width: 800px;
 }
 
+select {
+  border-radius: 15px;
+}
+
 .one_select {
   display: grid;
   padding: 10px;
