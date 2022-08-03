@@ -616,7 +616,7 @@ select {
 }
 
 .selected_sub_tab { 
-  border: 10px solid #ff99004a;
+  border-bottom: 10px solid #ff99004a;
   z-index: 1;
   margin: 13px;
 }
