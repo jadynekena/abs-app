@@ -1,5 +1,6 @@
 html {
   visibility: hidde; /*show ONLY IF auth or DEMO, especially for embedded*/ 
+  transition: filter 0.3s ease;
 }
 *, a {
 	font-family: Arial;
