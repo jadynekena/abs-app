@@ -224,7 +224,7 @@ iframe{
 	max-width: 800px;
 }
 
-select {
+select, input:not([type="checkbox"]) {
   border-radius: 15px;
 }
 
